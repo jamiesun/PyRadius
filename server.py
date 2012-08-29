@@ -6,6 +6,8 @@ from pyrad import dictionary
 from pyrad import host
 from pyrad import packet
 from settings import log 
+from handler import AccessRequestHandler
+from handler import AccountingRequestHandler
 import sys
 
 MaxPacketSize = 8192
@@ -17,6 +19,10 @@ class PacketError(Exception):
     abort processing of a packet.
     """
 
+handlers = {
+    packet.AccessRequest : AccessRequestHandler(),
+    packet.AccountingRequest : AccountingRequestHandler()
+}
 
 class RudiusServer(host.Host):
 
@@ -30,7 +36,7 @@ class RudiusServer(host.Host):
         self.acctport = acctport        
         self.secret = secret
 
-        if not address:
+        if not self.address:
             self.address = ['127.0.0.1']
 
         for addr in self.address:
@@ -55,7 +61,7 @@ class RudiusServer(host.Host):
             try:
                 data, (host, port) = yield sock.recvfrom(MaxPacketSize)
                 if host not in self.hosts:
-                    log.error('Dropping packet from unknown host ' + host)
+                    log.error(u'非法的请求 ' + host)
                     continue
             except:
                 continue
@@ -63,7 +69,7 @@ class RudiusServer(host.Host):
             try:
                 pkt = self.CreatePacket(packet=data)
             except packet.PacketError as err:
-                log.error('Dropping invalid packet: ' + str(err))
+                log.error(u'数据包错误: ' + str(err))
                 return            
 
             pkt.source = (host, port)
@@ -71,38 +77,10 @@ class RudiusServer(host.Host):
             pkt.sock = sock
 
             try:
-                if pkt.code == packet.AccessRequest:
-                    yield self.auth_process(pkt)
-                elif pkt.code == packet.AccountingRequest:
-                    yield self.acct_process(pkt)
-                else:
-                    log.error('Invalid packet on server socket from (%s %s)'%pkt.source)
+                pkt_handler = handlers[pkt.code]
+                yield pkt_handler.process(pkt)
             except PacketError as err:
-                log.error('Dropping packet from %s: %s' % (host, str(err)))  
-
-    def auth_process(self,pkt):
-
-        # log.debug("Received an authentication request")
-        # log.debug("Attributes: ")
-        # for attr in pkt.keys():
-        #     log.debug( "%s: %s" % (attr, pkt[attr]))
-
-        reply = pkt.CreateReply()
-        reply.source = pkt.source
-        reply.code=packet.AccessAccept
-        self.SendReplyPacket(pkt.sock,reply) 
-
-    def acct_process(self,pkt):
-
-        # log.debug("Received an accounting request")
-        # log.debug( "Attributes: ")
-        # for attr in pkt.keys():
-        #     log.debug( "%s: %s" % (attr, pkt[attr]))
-
-        reply = pkt.CreateReply()
-        reply.source = pkt.source
-        reply.code=packet.AccessAccept
-        self.SendReplyPacket(pkt.sock,reply) 
+                log.error(u'请求处理失败 %s: %s' % (host, str(err)))  
 
 
 
