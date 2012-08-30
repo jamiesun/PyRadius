@@ -4,7 +4,7 @@
 import MySQLdb
 from DBUtils.PooledDB import PooledDB
 from sqlbean.db import connection
-
+from utils import cache
 dbpool = PooledDB(creator=MySQLdb,
                     maxusage=1000,
                     host='localhost',
@@ -102,3 +102,13 @@ class RadUserBill(Model):
     """        
     class Meta:
         table="rad_user_bill" 
+
+
+@cache.cache('get_node_all_func')
+def get_node_all():
+    return RadNode.where()
+
+
+
+if __name__ == '__main__':
+    get_node_all()

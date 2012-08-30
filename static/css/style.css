@@ -446,7 +446,7 @@ ul.shortcut-buttons-set li {
 form label {
                 display: block;
                 padding: 0 0 10px;
-                font-weight: bold;
+                padding-top: 6px;
                 }
              
 form fieldset legend {
@@ -482,8 +482,6 @@ form .medium-input {
                 
 form .large-input {
                 width: 97.5% !important;
-				font-size: 16px !important;
-				padding: 8px !important;
                 }
                 
 form textarea {
@@ -789,3 +787,15 @@ div.wysiwyg ul.panel li a.removeFormat { background-position: -80px -64px; }
 div.wysiwyg ul.panel li a.empty { background-position: -64px -80px; }
 
 div.wysiwyg iframe { border: 0; margin: 5px 0 0 0; clear: left; width: 97.5% !important; }
+
+
+fieldset th {
+    width: 40%;
+} 
+
+fieldset .wrong{
+        font-family: Arial, Helvetica, sans-serif;
+        color: red;
+        font-size: 0.8em;
+        font-weight:400;
+}

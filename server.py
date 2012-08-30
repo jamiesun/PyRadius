@@ -79,7 +79,7 @@ class RudiusServer(host.Host):
             try:
                 pkt_handler = handlers[pkt.code]
                 yield pkt_handler.process(pkt)
-            except PacketError as err:
+            except:
                 log.error(u'请求处理失败 %s: %s' % (host, str(err)))  
 
 

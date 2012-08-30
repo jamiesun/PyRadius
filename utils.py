@@ -30,7 +30,6 @@ _lookup = TemplateLookup(directories=['%s/templates'%APP_DIR],
 
 def current_css(rpath):
     fullpath = "%s%s"%(web.ctx.homepath,web.ctx.path)
-    print rpath,fullpath
     if rpath in fullpath:
         return 'current'
     else:

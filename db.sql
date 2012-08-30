@@ -3,7 +3,7 @@
 -- Server version:               5.6.5-m8 - MySQL Community Server (GPL)
 -- Server OS:                    Win32
 -- HeidiSQL version:             7.0.0.4160
--- Date/time:                    2012-08-29 19:23:00
+-- Date/time:                    2012-08-30 18:04:51
 -- --------------------------------------------------------
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
@@ -24,7 +24,7 @@ CREATE TABLE IF NOT EXISTS `rad_nas` (
   `NAME` varchar(64) NOT NULL,
   `AUTH_SECRET` varchar(31) NOT NULL,
   `ACCT_SECRET` varchar(31) NOT NULL,
-  `NAS_TYPE` int(10) NOT NULL COMMENT 'BAS类型,0代表标准,1代表华为,2代表华三,3代表爱立信，4代表中兴，5代表阿尔卡特,',
+  `VENDOR_ID` int(9) NOT NULL COMMENT '厂商标识',
   `TIME_TYPE` int(1) NOT NULL COMMENT '时区类型，0表示标准时区，北京时间，1表示时区和时间同区',
   `STATUS` int(1) NOT NULL COMMENT '0：表示正常；1：表示停用',
   PRIMARY KEY (`IP_ADDR`)
@@ -61,9 +61,9 @@ DROP TABLE IF EXISTS `rad_opr`;
 CREATE TABLE IF NOT EXISTS `rad_opr` (
   `ID` varchar(32) NOT NULL,
   `NODE_ID` varchar(32) NOT NULL,
+  `NAME` varchar(64) DEFAULT NULL,
   `PASSWORD` varchar(32) NOT NULL,
   `TYPE` int(1) NOT NULL COMMENT '0：表示普通操作员；1：表示组织管理员',
-  `NAME` varchar(64) DEFAULT NULL,
   `IP_ADDR` varchar(15) DEFAULT NULL,
   `STATUS` int(1) NOT NULL COMMENT '0：表示正常；1：表示停用',
   PRIMARY KEY (`ID`)
@@ -106,6 +106,7 @@ CREATE TABLE IF NOT EXISTS `rad_product` (
   `OUTPUT_MAX_LIMIT` int(10) NOT NULL COMMENT '下行最大速率',
   `INPUT_RATE_CODE` varchar(32) DEFAULT NULL COMMENT '上行QOS属性编码',
   `OUTPUT_RATE_CODE` varchar(32) DEFAULT NULL COMMENT '下行QOS属性编码',
+  `DOMAIN_CODE` varchar(32) DEFAULT NULL COMMENT '产品状态：0正常，1停用',
   PRIMARY KEY (`ID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -207,6 +208,7 @@ CREATE TABLE IF NOT EXISTS `rad_user_bill` (
 DROP TABLE IF EXISTS `rad_user_group`;
 CREATE TABLE IF NOT EXISTS `rad_user_group` (
   `ID` varchar(32) NOT NULL,
+  `NODE_ID` varchar(32) NOT NULL,
   `NAME` varchar(64) NOT NULL,
   `DESC` varchar(255) DEFAULT NULL,
   `STATUS` int(1) NOT NULL,
