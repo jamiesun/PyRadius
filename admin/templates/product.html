@@ -1,0 +1,73 @@
+<%inherit file="base.html"/>
+
+<%def name="head()"> 
+<script>
+function deleteProduct(nid)
+{
+    if(confirm("确认删除吗？")){
+        window.location.href = "/product/delete/"+nid;
+    }
+}
+</script>
+</%def> 
+
+
+<%def name="body()"> 
+<div class="content-box">
+    <div class="content-box-header">
+        <h3>产品信息</h3>
+    </div>
+    <!-- End .content-box-header -->
+    <div class="content-box-content">
+        <div class="tab-content default-tab">
+        <p>
+        <a class="button" href="/product/add">新增产品套餐</a>
+        </p>        
+          <table>
+            <thead>
+              <tr>
+                <th>套餐编号</th>
+                <th>套餐名称</th>
+                <th>产品策略</th>
+                <th>产品价格信息</th>
+                <th>状态</th>
+                <th>并发数</th>
+                <th>绑定MAC</th>
+                <th>绑定VLAN</th>
+                <th>上行速率</th>
+                <th>下行速率</th>
+                <th>操作</th>
+              </tr>
+            </thead>          
+            <tbody>
+            % for product in products:
+                <tr>
+                    <td>${product.id}</td>
+                    <td>${product.name}</td>
+                    <td>${{0:u"买断包月",1:u"预付费时长"}.get(product.policy)}</td>
+                    <td>
+                    % if product.policy == 0:
+                        ${product.fee_price}元/${product.fee_num}月
+                    % elif product.policy == 1:
+                        ${product.fee_price}元/每小时
+                    % endif
+                    </td>
+                    <td>${product.concur_number}</td>
+                    <td>${{0:u"不绑定",1:u"绑定"}.get(product.bind_mac)}</td>
+                    <td>${{0:u"不绑定",1:u"绑定"}.get(product.bind_vlan)}</td>
+                    <td>${product.bandwidth_code}</td>
+                    <td>${product.input_max_limit}</td>    
+                    <td>${product.output_max_limit}</td>                                       
+                    <td>
+                    <a href="/product/update/${product.id}" ><img src="/images/icons/pencil.png" alt="Edit"></a> 
+                    <a href="javascript:deleteProduct('${product.id}');" ><img src="/images/icons/cross.png" alt="Delete"></a> 
+                    </td>
+                </tr>            
+            % endfor             
+            </tbody>      
+            </table>
+        </div>
+    </div>
+</div>
+
+</%def> 

@@ -4,15 +4,17 @@
 from utils import route_app
 from settings import config
 from utils import render
-import sysapp
-import userapp
+import node
+import nas
+import product
 import web
 
 
 """ application defined """
 app  = route_app()
-app.mount("/sys",sysapp.app)
-app.mount("/user",userapp.app)
+app.mount("/node",node.app)
+app.mount("/nas",nas.app)
+app.mount("/product",product.app)
 
 '''session defined'''
 # session = web.session.Session(app, web.session.DiskStore('sessions'), {'count': 0})   
@@ -29,6 +31,10 @@ def context_hook():
 app.add_processor(web.loadhook(context_hook))   
 
 
+@app.route("/avicon.ico")
+class js():
+    def GET(self,filename):
+        raise web.seeother("/static/avicon.ico",absolute=True)
 
 @app.route("/index")
 class home():

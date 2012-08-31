@@ -1,0 +1,63 @@
+<%inherit file="base.html"/>
+
+<%def name="head()"> 
+
+<script>
+function deleteNas(nid)
+{
+    if(confirm("确认删除吗？")){
+        window.location.href = "/nas/delete/"+nid;
+    }
+}
+</script>
+
+</%def> 
+
+
+<%def name="body()"> 
+<div class="content-box">
+    <div class="content-box-header">
+        <h3>NAS设备信息</h3>
+    </div>
+    <!-- End .content-box-header -->
+    <div class="content-box-content">
+        <div class="tab-content default-tab">
+        <p>
+        <a class="button" href="/nas/add">新增NAS设备</a>
+        </p>        
+          <table>
+            <thead>
+              <tr>
+                <th>NasIP地址</th>
+                <th>Nas名称</th>
+                <th>认证密钥</th>
+                <th>记账密钥</th>
+                <th>厂商标识</th>
+                <th>时区类型</th>
+                <th>状态</th>
+                <th>操作</th>
+              </tr>
+            </thead>          
+            <tbody>
+            % for nas in nass:
+                <tr>
+                    <td>${nas.ip_addr}</td>
+                    <td>${nas.name}</td>
+                    <td>${nas.acct_secret}</td>
+                    <td>${nas.acct_secret}</td>
+                    <td>${nas.vendor_id}</td>
+                    <td>${{0:u"标准时区/北京时间",1:u"北京时区/北京时间"}.get(nas.time_type)}</td>
+                    <td>${{0:u"正常",1:u"停用"}.get(nas.time_type)}</td>
+                    <td>
+                    <a href="/nas/update/${nas.id}" ><img src="/images/icons/pencil.png" alt="Edit"></a> 
+                    <a href="javascript:deleteNas('${nas.id}');" ><img src="/images/icons/cross.png" alt="Delete"></a> 
+                    </td>
+                </tr>            
+            % endfor             
+            </tbody>      
+            </table>
+        </div>
+    </div>
+</div>
+
+</%def> 

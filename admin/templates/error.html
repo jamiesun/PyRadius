@@ -1,0 +1,19 @@
+<%inherit file="base.html"/>
+
+<%def name="head()"> 
+
+</%def> 
+
+
+<%def name="body()"> 
+<div class="content-box-header">
+  <h3>${title}  <a href="javascript:history.go(-1);">返回</a></h3>
+</div> 
+<div class="content-box-content">
+  <div class="tab-content default-tab">
+  % if error:
+      <p>${error}</p>
+  % endif
+  </div>
+</div>
+</%def> 
