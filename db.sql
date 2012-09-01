@@ -3,7 +3,7 @@
 -- Server version:               5.6.5-m8 - MySQL Community Server (GPL)
 -- Server OS:                    Win32
 -- HeidiSQL version:             7.0.0.4160
--- Date/time:                    2012-08-31 12:18:28
+-- Date/time:                    2012-09-01 16:31:52
 -- --------------------------------------------------------
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
@@ -17,10 +17,35 @@ CREATE DATABASE IF NOT EXISTS `pyradius` /*!40100 DEFAULT CHARACTER SET utf8 */;
 USE `pyradius`;
 
 
+-- Dumping structure for table pyradius.rad_area
+DROP TABLE IF EXISTS `rad_area`;
+CREATE TABLE IF NOT EXISTS `rad_area` (
+  `node_id` varchar(32) NOT NULL,
+  `area_id` varchar(10) NOT NULL,
+  `area_name` varchar(64) NOT NULL,
+  PRIMARY KEY (`node_id`,`area_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- Data exporting was unselected.
+
+
+-- Dumping structure for table pyradius.rad_community
+DROP TABLE IF EXISTS `rad_community`;
+CREATE TABLE IF NOT EXISTS `rad_community` (
+  `node_id` varchar(32) NOT NULL,
+  `area_id` varchar(10) NOT NULL,
+  `community_id` varchar(10) NOT NULL,
+  `community_name` varchar(64) NOT NULL,
+  PRIMARY KEY (`node_id`,`area_id`,`community_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- Data exporting was unselected.
+
+
 -- Dumping structure for table pyradius.rad_nas
 DROP TABLE IF EXISTS `rad_nas`;
 CREATE TABLE IF NOT EXISTS `rad_nas` (
-  `id` varchar(15) NOT NULL,
+  `id` varchar(32) NOT NULL,
   `ip_addr` varchar(15) NOT NULL,
   `name` varchar(64) NOT NULL,
   `auth_secret` varchar(31) NOT NULL,
@@ -102,7 +127,7 @@ CREATE TABLE IF NOT EXISTS `rad_product` (
   `fee_price` int(10) NOT NULL COMMENT '计费价格,单位：分',
   `bind_mac` int(1) NOT NULL,
   `bind_vlan` int(1) NOT NULL,
-  `concur_number` int(10) NOT NULL,
+  `concur_number` int(10) NOT NULL DEFAULT '0',
   `bandwidth_code` varchar(32) DEFAULT NULL COMMENT '下发给bas限速的qos属性编码字母和数组成，首字母不能为数字',
   `input_max_limit` int(10) NOT NULL COMMENT '上行最大速率',
   `output_max_limit` int(10) NOT NULL COMMENT '下行最大速率',
@@ -140,8 +165,9 @@ CREATE TABLE IF NOT EXISTS `rad_user` (
   `user_cname` varchar(64) NOT NULL,
   `password` varchar(64) NOT NULL,
   `node_id` varchar(32) NOT NULL,
+  `area_id` varchar(32) NOT NULL,
+  `community_id` varchar(32) NOT NULL,
   `product_id` varchar(16) NOT NULL,
-  `group_id` varchar(10) NOT NULL,
   `opr_id` varchar(32) DEFAULT NULL,
   `auth_begin_date` varchar(10) NOT NULL,
   `auth_end_date` varchar(10) NOT NULL,
@@ -167,11 +193,9 @@ CREATE TABLE IF NOT EXISTS `rad_user` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `user_name` (`user_name`),
   KEY `node_id` (`node_id`),
-  KEY `group_id` (`group_id`),
   KEY `auth_begin_date` (`auth_begin_date`),
   KEY `auth_end_date` (`auth_end_date`),
-  KEY `create_time` (`create_time`),
-  KEY `status` (`status`)
+  KEY `create_time` (`create_time`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- Data exporting was unselected.
@@ -207,20 +231,6 @@ CREATE TABLE IF NOT EXISTS `rad_user_bill` (
   `opr_id` varchar(32) NOT NULL,
   `bill_desc` varchar(512) NOT NULL,
   `bill_time` varchar(19) NOT NULL,
-  `status` int(1) NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
--- Data exporting was unselected.
-
-
--- Dumping structure for table pyradius.rad_user_group
-DROP TABLE IF EXISTS `rad_user_group`;
-CREATE TABLE IF NOT EXISTS `rad_user_group` (
-  `id` varchar(32) NOT NULL,
-  `node_id` varchar(32) NOT NULL,
-  `name` varchar(64) NOT NULL,
-  `desc` varchar(255) DEFAULT NULL,
   `status` int(1) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
