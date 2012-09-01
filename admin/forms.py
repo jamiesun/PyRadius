@@ -57,6 +57,38 @@ node_update_form = form.Form(
     form.Button("submit", type="submit",html="<b>提交</b>",**button_style),
 )
 
+
+area_add_form = form.Form(
+    form.Textbox("node_id",description="节点编号:(由定长6位数字或字母组成）",readonly="readonly",**input_style),
+    form.Textbox("area_id", is_alphanum2(1,10),description="区域编码：（由10位不定长的字母或数字组合）",**input_style),
+    form.Textbox("area_name",len_of(1,32), description="区域名称：（32个汉字以内）",**input_style),
+    form.Button("submit", type="submit",html="<b>提交</b>",**button_style),
+)
+
+area_update_form = form.Form(
+    form.Textbox("node_id",description="节点编号:(由定长6位数字或字母组成）",readonly="readonly",**input_style),
+    form.Textbox("area_id",description="区域编码：（由10位不定长的字母或数字组合）",readonly="readonly",**input_style),
+    form.Textbox("area_name",len_of(1,32), description="区域名称：（32个汉字以内）",**input_style),
+    form.Button("submit", type="submit",html="<b>提交</b>",**button_style),
+)
+
+
+community_add_form = form.Form(
+    form.Textbox("node_id",description="节点编号:(由定长6位数字或字母组成）",readonly="readonly",**input_style),
+    form.Textbox("area_id",description="区域编码：（由10位不定长的字母或数字组合）",readonly="readonly",**input_style),
+    form.Textbox("community_id",is_alphanum2(1,10),description="小区编码：（由10位不定长的字母或数字组合）",**input_style),
+    form.Textbox("community_name",len_of(1,32), description="小区名称：（32个汉字以内）",**input_style),
+    form.Button("submit", type="submit",html="<b>提交</b>",**button_style),
+)
+
+community_update_form = form.Form(
+    form.Textbox("node_id",description="节点编号:(由定长6位数字或字母组成）",readonly="readonly",**input_style),
+    form.Textbox("area_id",description="区域编码：（由10位不定长的字母或数字组合）",readonly="readonly",**input_style),
+    form.Textbox("community_id",description="小区编码：（由10位不定长的字母或数字组合）",readonly="readonly",**input_style),
+    form.Textbox("community_name",len_of(1,32), description="区域名称：（32个汉字以内）",**input_style),
+    form.Button("submit", type="submit",html="<b>提交</b>",**button_style),
+)
+
 nas_add_form = form.Form(
     form.Textbox("ip_addr",is_ip,description="IP地址：",**input_style),
     form.Textbox("name", len_of(1,32),description="名称：（32个汉字以内）",**input_style),
@@ -85,8 +117,8 @@ product_add_form = form.Form(
     form.Textbox("id", is_alphanum2(6,32),description="产品套餐编号：（6-32个字母数字组合以内）",**input_style),
     form.Textbox("name", len_of(1,32),description="产品套餐名称：（32个汉字以内）",**input_style),
     form.Dropdown("policy", [(0,"买断包月"),(1,"预付费时长")],description="产品套餐策略：(买断包月|预付费时长)"),
-    form.Textbox("fee_num", is_number,description="产品买断月数",**input_style),
-    form.Textbox("fee_price",is_rmb, description="产品总价格：（单位：元）",**input_style),
+    form.Textbox("fee_num", is_number,description="产品买断月数（包月）",**input_style),
+    form.Textbox("fee_price",is_rmb, description="产品总价格（包月）/每小时价格（计时）：（单位：元）",**input_style),
     form.Textbox("concur_number",is_number, description="用户并发数：（0表示不限定|并发数不能超过20）",**input_style),
     form.Radio("bind_mac", [(0,"不绑定"),(1,"绑定")],value=0,description="是否绑定MAC地址："),
     form.Radio("bind_vlan", [(0,"不绑定"),(1,"绑定")],value=0,description="是否绑定VLAN/QINQ："),
@@ -96,5 +128,26 @@ product_add_form = form.Form(
     form.Textbox("input_rate_code", is_alphanum2(0,20),description="上行速率编码：（20位内字符组成）",**input_style),
     form.Textbox("output_rate_code", is_alphanum2(0,20),description="下行速率编码：（20位内字符组成）",**input_style),
     form.Textbox("domain_code", is_alphanum2(0,32),description="产品域：",**input_style),
+    form.Dropdown("status",  [(0,"正常"),(1,"停用")],description="状态：（正常|停用）",value=0),
+    form.Button("submit", type="submit",html="<b>提交</b>",**button_style),
+)
+
+product_update_form = form.Form(
+    form.Dropdown("node_id",node_seq(),description="节点：",disabled="disabled"),
+    form.Textbox("id", description="产品套餐编号：（6-32个字母数字组合以内）",readonly="readonly",**input_style),
+    form.Textbox("name", len_of(1,32),description="产品套餐名称：（32个汉字以内）",**input_style),
+    form.Dropdown("policy", [(0,"买断包月"),(1,"预付费时长")],description="产品套餐策略：(买断包月|预付费时长)",disabled="disabled"),
+    form.Textbox("fee_num", is_number,description="产品买断月数（包月）",**input_style),
+    form.Textbox("fee_price",is_rmb, description="产品总价格（包月）/每小时价格（计时）：（单位：元）",**input_style),
+    form.Textbox("concur_number",is_number, description="用户并发数：（0表示不限定|并发数不能超过20）",**input_style),
+    form.Radio("bind_mac", [(0,"不绑定"),(1,"绑定")],value=0,description="是否绑定MAC地址："),
+    form.Radio("bind_vlan", [(0,"不绑定"),(1,"绑定")],value=0,description="是否绑定VLAN/QINQ："),
+    form.Textbox("bandwidth_code", is_alphanum2(0,8),description="限速属性编码：（字母开头,数字和字母组成,最大8位）",**input_style),
+    form.Textbox("input_max_limit",is_number, description="上行最大速率：（单位:bps,2M=2097152）",**input_style),
+    form.Textbox("output_max_limit",is_number, description="下行最大速率：（单位:bps,4M=4194304）",**input_style),
+    form.Textbox("input_rate_code", is_alphanum2(0,20),description="上行速率编码：（20位内字符组成）",**input_style),
+    form.Textbox("output_rate_code", is_alphanum2(0,20),description="下行速率编码：（20位内字符组成）",**input_style),
+    form.Textbox("domain_code", is_alphanum2(0,32),description="产品域：",**input_style),
+    form.Dropdown("status",  [(0,"正常"),(1,"停用")],description="状态：（正常|停用）"),
     form.Button("submit", type="submit",html="<b>提交</b>",**button_style),
 )

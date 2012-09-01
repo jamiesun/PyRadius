@@ -4,10 +4,37 @@ from sqlalchemy import *
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relation
 
-engine = create_engine('mysql://root:root@localhost/pyradius?charset=utf8',encoding='utf-8', echo=True)
+engine = create_engine('mysql://root:root@localhost/pyradius?charset=utf8',echo=True)
 DeclarativeBase = declarative_base()
 metadata = DeclarativeBase.metadata
 metadata.bind = engine
+
+class RadArea(DeclarativeBase):
+    __tablename__ = 'rad_area'
+
+    __table_args__ = {}
+
+    #column definitions
+    area_id = Column(u'area_id', VARCHAR(length=10), primary_key=True, nullable=False)
+    area_name = Column(u'area_name', VARCHAR(length=64), nullable=False)
+    node_id = Column(u'node_id', VARCHAR(length=32), primary_key=True, nullable=False)
+
+    #relation definitions
+
+
+class RadCommunity(DeclarativeBase):
+    __tablename__ = 'rad_community'
+
+    __table_args__ = {}
+
+    #column definitions
+    area_id = Column(u'area_id', VARCHAR(length=10), primary_key=True, nullable=False)
+    community_id = Column(u'community_id', VARCHAR(length=10), primary_key=True, nullable=False)
+    community_name = Column(u'community_name', VARCHAR(length=64), nullable=False)
+    node_id = Column(u'node_id', VARCHAR(length=32), primary_key=True, nullable=False)
+
+    #relation definitions
+
 
 class RadNas(DeclarativeBase):
     __tablename__ = 'rad_nas'
@@ -17,7 +44,7 @@ class RadNas(DeclarativeBase):
     #column definitions
     acct_secret = Column(u'acct_secret', VARCHAR(length=31), nullable=False)
     auth_secret = Column(u'auth_secret', VARCHAR(length=31), nullable=False)
-    id = Column(u'id', VARCHAR(length=15), primary_key=True, nullable=False)
+    id = Column(u'id', VARCHAR(length=32), primary_key=True, nullable=False)
     ip_addr = Column(u'ip_addr', VARCHAR(length=15), nullable=False)
     name = Column(u'name', VARCHAR(length=64), nullable=False)
     status = Column(u'status', INTEGER(), nullable=False)
@@ -135,13 +162,14 @@ class RadUser(DeclarativeBase):
     __table_args__ = {}
 
     #column definitions
+    area_id = Column(u'area_id', VARCHAR(length=32), nullable=False)
     auth_begin_date = Column(u'auth_begin_date', VARCHAR(length=10), nullable=False)
     auth_end_date = Column(u'auth_end_date', VARCHAR(length=10), nullable=False)
     balance = Column(u'balance', INTEGER(), nullable=False)
     basic_fee = Column(u'basic_fee', INTEGER(), nullable=False)
+    community_id = Column(u'community_id', VARCHAR(length=32), nullable=False)
     create_time = Column(u'create_time', VARCHAR(length=19), nullable=False)
     domain_code = Column(u'domain_code', VARCHAR(length=6))
-    group_id = Column(u'group_id', VARCHAR(length=10), nullable=False)
     id = Column(u'id', VARCHAR(length=32), primary_key=True, nullable=False)
     idcard = Column(u'idcard', VARCHAR(length=32))
     install_address = Column(u'install_address', VARCHAR(length=128), nullable=False)
@@ -203,21 +231,6 @@ class RadUserBill(DeclarativeBase):
     opr_id = Column(u'opr_id', VARCHAR(length=32), nullable=False)
     status = Column(u'status', INTEGER(), nullable=False)
     user_id = Column(u'user_id', VARCHAR(length=32), nullable=False)
-
-    #relation definitions
-
-
-class RadUserGroup(DeclarativeBase):
-    __tablename__ = 'rad_user_group'
-
-    __table_args__ = {}
-
-    #column definitions
-    desc = Column(u'desc', VARCHAR(length=255))
-    id = Column(u'id', VARCHAR(length=32), primary_key=True, nullable=False)
-    name = Column(u'name', VARCHAR(length=64), nullable=False)
-    node_id = Column(u'node_id', VARCHAR(length=32), nullable=False)
-    status = Column(u'status', INTEGER(), nullable=False)
 
     #relation definitions
 

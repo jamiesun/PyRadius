@@ -1,1 +1,1 @@
- sqlautocode mysql://root:root@localhost/pyradius -d -e -g -o models.py
+ sqlautocode mysql://root:root@localhost/pyradius -d -o models.py

@@ -36,9 +36,10 @@ class index():
                 for nasnode in db.query(models.RadNasNode).filter(models.RadNasNode.node_id == nodeid.id):
                     db.delete(nasnode)                     
                 db.commit()
-            except:
+                db.flush()
+            except Exception,e:
                 db.rollback()
-                return errorpage("删除失败")
+                return errorpage("删除失败 %s"%str(e))
         raise web.seeother("/node",absolute=True)
 
 @app.route("/add")
@@ -86,9 +87,10 @@ class index():
                     db.add(radnasnode) 
 
                 db.commit()
-            except:
+                db.flush()
+            except Exception,e:
                 db.rollback()
-                return errorpage("节点新增失败")
+                return errorpage("节点新增失败 %s"%str(e))
 
             raise web.seeother("/node",absolute=True)
 
@@ -155,11 +157,10 @@ class index():
                     db.add(radnasnode) 
 
                 db.commit()
-            except:
-                import traceback
-                traceback.print_exc()
+                db.flush()
+            except Exception,e:
                 db.rollback()
-                return errorpage("节点修改失败")
+                return errorpage("节点修改失败 %s"%str(e))
             raise web.seeother("/node",absolute=True)
 
 

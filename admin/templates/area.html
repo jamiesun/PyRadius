@@ -1,0 +1,72 @@
+<%inherit file="base.html"/>
+<%def name="head()"> 
+<script>
+function queryAreas()
+{
+    window.location.href = "/area?node_id="+$("#node_id").val();
+}
+
+function addArea()
+{
+     if($("#node_id").val()==""){
+        alert("请选择节点");
+        return;
+     }
+     window.location.href = "/area/add?node_id="+$("#node_id").val();
+}
+
+function deleteArea(nid,aid)
+{
+    if(confirm("删除节点同时会删除节点下的所有操作员，确认删除吗？")){
+        window.location.href = "/area/delete?node_id="+nid+"&area_id="+aid;
+    }
+}
+</script>
+</%def> 
+
+
+<%def name="body()"> 
+<div class="content-box">
+    <div class="content-box-header">
+        <h3>节点信息</h3>
+    </div>
+    <!-- End .content-box-header -->
+    <div class="content-box-content">
+        <div class="tab-content default-tab">
+        <p>
+        <select id="node_id" name="node_id" >
+            <option value="">节点选择</option>
+            % for node in nodes:
+             <option value="${node.id}">${node.name}</option>
+            % endfor
+        </select>
+        <a class="button" href="javascript:queryAreas();">查询区域</a> 
+        <a class="button" href="javascript:addArea();">新增区域</a> 
+        </p>        
+          <table>
+            <thead>
+              <tr>
+                <th>区域编号</th>
+                <th>区域名称</th>
+                <th>操作</th>
+              </tr>
+            </thead>          
+            <tbody>
+            % for area in areas:
+                <tr>
+                    <td>${area.area_id}</td>
+                    <td>${area.area_name}</td>
+                    <td>
+                    <a href="/area/update?node_id=${area.node_id}&area_id=${area.area_id}" ><img src="/images/icons/pencil.png" alt="Edit"></a> 
+                    <a href="javascript:deleteArea('${area.node_id}','${area.area_id}');" ><img src="/images/icons/cross.png" alt="Delete"></a> 
+                    </td>
+                </tr>            
+            % endfor             
+            </tbody>      
+            </table>
+      
+        </div>
+    </div>
+</div>
+
+</%def> 

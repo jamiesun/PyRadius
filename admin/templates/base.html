@@ -1,7 +1,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+<meta http-equiv="Content-Type" content="text/html; utf-8" />
 <title>${pagename or ctx.config.get("sitename")}</title>
 <!-- Reset Stylesheet -->
 <link rel="stylesheet" href="/css/reset.css" type="text/css" media="screen" />
@@ -33,14 +33,15 @@ ${self.head()}
         <li> <a href="/" class="nav-top-item no-submenu">
           <!-- Add the class "no-submenu" to menu items with no sub menu -->
           管理首页 </a> </li>
-        <li> <a href="#" class='nav-top-item ${current_css(["/node","/nas","/product","/usergroup"])}'>
+        <li> <a href="#" class='nav-top-item ${current_css(["/node","/nas","/product","/area","/community"])}'>
           <!-- Add the class "current" to current menu item -->
           系统管理 </a>
           <ul>
             <li><a class='${current_css("/node")}' href="/node">节点管理</a></li>
+            <li><a class='${current_css("/area")}' href="/area">区域管理</a></li>
+            <li><a class='${current_css("/community")}' href="/community">小区管理</a></li>
             <li><a class='${current_css("/nas")}' href="/nas">Nas管理</a></li>
             <li><a class='${current_css("/product")}' href="/product">套餐管理</a></li>
-            <li><a class='${current_css("/usergroup")}' href="/usergroup">用户组管理</a></li>
           </ul>
         </li>
         <li> <a href="#" class='nav-top-item ${current_css(["/user","/roster"])}'> 用户管理 </a>

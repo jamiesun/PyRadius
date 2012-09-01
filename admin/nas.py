@@ -30,8 +30,10 @@ class index():
                 for nas in db.query(models.RadNas).filter(models.RadNas.id == nasid):
                     db.delete(nas)
                 db.commit()
-            except:
-                return errorpage("删除失败")
+                db.flush()
+            except Exception,e:
+                db.rollback()
+                return errorpage("删除失败 %s"%str(e))
         raise web.seeother("/nas",absolute=True)                
 
 @app.route("/add")
@@ -63,9 +65,10 @@ class index():
                 nas.status = form.d.status
                 db.add(nas)
                 db.commit()
-            except:
+                db.flush()
+            except Exception,e:
                 db.rollback()
-                return errorpage("新增Nas失败")
+                return errorpage("新增Nas失败 %s"%str(e))
             raise web.seeother("/nas",absolute=True)
 
 @app.route("/update/(.*)")
@@ -105,7 +108,9 @@ class index():
                 nas.time_type = form.d.time_type
                 nas.status = form.d.status
                 db.commit()
-            except:
-                return errorpage("修改Nas失败")
+                db.flush()
+            except Exception,e:
+                db.rollback()
+                return errorpage("修改Nas失败 %s"%str(e))
             raise web.seeother("/nas",absolute=True)
 

@@ -11,9 +11,9 @@ from settings import config
 from sqlalchemy.orm import scoped_session,sessionmaker
 from models import engine
 
-session = scoped_session(sessionmaker(bind=engine))
+session = scoped_session(sessionmaker(bind=engine,autocommit=False, autoflush=False))()
 def get_db():
-    return session()
+    return session
 
 APP_DIR = "./"
 

@@ -5,6 +5,8 @@ from utils import route_app
 from settings import config
 from utils import render
 import node
+import area
+import community
 import nas
 import product
 import web
@@ -13,6 +15,8 @@ import web
 """ application defined """
 app  = route_app()
 app.mount("/node",node.app)
+app.mount("/area",area.app)
+app.mount("/community",community.app)
 app.mount("/nas",nas.app)
 app.mount("/product",product.app)
 
