@@ -38,7 +38,6 @@ class index():
             try:
                 radproduct = models.RadProduct()
                 radproduct.id = form.d.id
-                radproduct.node_id = form.d.node_id
                 radproduct.name = form.d.name
                 radproduct.policy = form.d.policy
                 radproduct.fee_num = form.d.fee_num

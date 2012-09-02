@@ -47,7 +47,7 @@ function deleteNas(nid)
                     <td>${nas.acct_secret}</td>
                     <td>${nas.vendor_id}</td>
                     <td>${{0:u"标准时区/北京时间",1:u"北京时区/北京时间"}.get(nas.time_type)}</td>
-                    <td>${{0:u"正常",1:u"停用"}.get(nas.time_type)}</td>
+                    <td>${{0:u"正常",1:u"停用"}.get(nas.status)}</td>
                     <td>
                     <a href="/nas/update/${nas.id}" ><img src="/images/icons/pencil.png" alt="Edit"></a> 
                     <a href="javascript:deleteNas('${nas.id}');" ><img src="/images/icons/cross.png" alt="Delete"></a> 

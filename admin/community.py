@@ -30,7 +30,7 @@ class routeto():
              .all()
         else:
             communitys = get_db().query(models.RadCommunity).all()
-        return render("community.html",nodes=nodes,communitys=communitys)   
+        return render("community.html",nodes=nodes,node_area="%s,%s"%(node_id,area_id),communitys=communitys)   
 
 @app.route("/delete")
 class index():

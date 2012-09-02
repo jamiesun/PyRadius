@@ -23,7 +23,7 @@ class routeto():
              .filter(models.RadArea.node_id == node_id).all()
         else:
             areas = get_db().query(models.RadArea).all()
-        return render("area.html",nodes=nodes,areas=areas)   
+        return render("area.html",nodes=nodes,node_id=node_id,areas=areas)   
 
 @app.route("/delete")
 class index():

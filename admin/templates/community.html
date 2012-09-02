@@ -49,7 +49,7 @@ function deleteCommunity(nid,aid,cid)
              % for node in nodes:
               <optgroup label="${node.name}">
                 % for area in node.areas:
-                <option value="${node.id},${area.area_id}">${area.area_name}</option>
+                <option value="${node.id},${area.area_id}"  ${is_select("%s,%s"%(node.id,area.area_id),node_area)}  >${area.area_name}</option>
                 % endfor
               </optgroup>
              % endfor

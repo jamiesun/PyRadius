@@ -29,11 +29,11 @@ class index():
         if nodeid:
             db = get_db()
             try:
-                for node in db.query(models.RadNode).filter_by(id = nodeid):
+                for node in db.query(models.RadNode).filter(models.RadNode.id == nodeid):
                     db.delete(node)
-                for opr in db.query(models.RadOpr).filter_by(node_id = nodeid):
+                for opr in db.query(models.RadOpr).filter(models.RadOpr.node_id == nodeid):
                     db.delete(opr)   
-                for nasnode in db.query(models.RadNasNode).filter(models.RadNasNode.node_id == nodeid.id):
+                for nasnode in db.query(models.RadNasNode).filter(models.RadNasNode.node_id == nodeid):
                     db.delete(nasnode)                     
                 db.commit()
                 db.flush()

@@ -1,0 +1,77 @@
+<%inherit file="base.html"/>
+<%def name="head()"> 
+<script>
+function queryUsers()
+{
+    window.location.href = "/user?node_id="+$("#node_id").val();
+}
+
+function addUser()
+{
+     if($("#node_id").val()==""){
+        alert("请选择节点");
+        return;
+     }
+     window.location.href = "/user/add?node_id="+$("#node_id").val();
+}
+
+function deleteUser(uid)
+{
+    if(confirm("确认删除吗？")){
+        window.location.href = "/user/delete?user_id="+uid;
+    }
+}
+</script>
+</%def> 
+
+<%def name="body()"> 
+<div class="content-box">
+    <div class="content-box-header">
+        <h3>用户信息</h3>
+    </div>
+    <!-- End .content-box-header -->
+    <div class="content-box-content">
+        <div class="tab-content default-tab">
+        <p>
+        <select id="node_id" name="node_id" >
+            <option value="">节点选择</option>
+            % for node in nodes:
+             <option value="${node.id}" ${is_select(node.id,node_id)} >${node.name}</option>
+            % endfor
+        </select>
+        <a class="button" href="javascript:queryUsers();">查询用户</a> 
+        <a class="button" href="javascript:addUser();">新增用户</a>        
+          <table>
+            <thead>
+              <tr>
+                <th>上网帐号</th>
+                <th>用户名称</th>
+                <th>生效日期</th>
+                <th>截至日期</th>
+                <th>IP地址</th>
+                <th>状态</th>
+                <th>操作</th>
+              </tr>
+            </thead>          
+            <tbody>
+            % for user in users:
+                <tr>
+                    <td>${user.user_name}</td>
+                    <td>${user.user_cname}</td>
+                    <td>${user.auth_begin_date}</td>
+                    <td>${user.auth_end_date}</td>
+                    <td>${user.ip_addr}</td>
+                    <td>${{0:u"正常",1:u"停用"}.get(user.status)}</td>
+                    <td>
+                    <a href="/user/update?user_id=${user.id}" ><img src="/images/icons/pencil.png" alt="Edit"></a> 
+                    <a href="javascript:deleteUser('${user.id}');" ><img src="/images/icons/cross.png" alt="Delete"></a> 
+                    </td>
+                </tr>            
+            % endfor             
+            </tbody>      
+            </table>
+        </div>
+    </div>
+</div>
+
+</%def> 

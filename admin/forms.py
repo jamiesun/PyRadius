@@ -8,10 +8,21 @@ import models
 db = get_db()
 
 def node_seq():
-    return [(node.id,node.name) for node in db.query(models.RadNode)]
+    nodes = db.query(models.RadNode)
+    return [(node.id,node.name) for node in nodes]
 
 def nas_seq():
-    return [(nas.ip_addr,nas.ip_addr) for nas in db.query(models.RadNas)]
+    nass = db.query(models.RadNas).filter(models.RadNas.status == 0)
+    return [(nas.ip_addr,nas.ip_addr) for nas in nass]
+
+def product_seq():
+    products = db.query(models.RadProduct).filter(models.RadProduct.status == 0)
+    return [(product.id,product.name) for product in products]
+
+
+
+
+
 
 
 is_email = form.regexp('[\w-]+(\.[\w-]+)*@[\w-]+(\.[\w-]+)+$',"无效的email格式")
@@ -113,7 +124,6 @@ nas_update_form = form.Form(
 )
 
 product_add_form = form.Form(
-    form.Dropdown("node_id",node_seq(),form.notnull,description="节点："),
     form.Textbox("id", is_alphanum2(6,32),description="产品套餐编号：（6-32个字母数字组合以内）",**input_style),
     form.Textbox("name", len_of(1,32),description="产品套餐名称：（32个汉字以内）",**input_style),
     form.Dropdown("policy", [(0,"买断包月"),(1,"预付费时长")],description="产品套餐策略：(买断包月|预付费时长)"),
@@ -133,7 +143,6 @@ product_add_form = form.Form(
 )
 
 product_update_form = form.Form(
-    form.Dropdown("node_id",node_seq(),description="节点：",disabled="disabled"),
     form.Textbox("id", description="产品套餐编号：（6-32个字母数字组合以内）",readonly="readonly",**input_style),
     form.Textbox("name", len_of(1,32),description="产品套餐名称：（32个汉字以内）",**input_style),
     form.Dropdown("policy", [(0,"买断包月"),(1,"预付费时长")],description="产品套餐策略：(买断包月|预付费时长)",disabled="disabled"),
@@ -149,5 +158,25 @@ product_update_form = form.Form(
     form.Textbox("output_rate_code", is_alphanum2(0,20),description="下行速率编码：（20位内字符组成）",**input_style),
     form.Textbox("domain_code", is_alphanum2(0,32),description="产品域：",**input_style),
     form.Dropdown("status",  [(0,"正常"),(1,"停用")],description="状态：（正常|停用）"),
+    form.Button("submit", type="submit",html="<b>提交</b>",**button_style),
+)
+
+
+user_add_form = form.Form(
+    form.Textbox("node_id",description="节点：",readonly="readonly"),
+    form.Textbox("user_name",is_alphanum2(6,32),description="上网帐号：（字母和数字组合 6-32位以内）",**input_style),
+    form.Textbox("user_cname",len_of(1,32),description="客户名称：（32个汉字以内）",**input_style),
+    form.Password("password",is_alphanum2(6,20),description="上网密码(6-20字母数字)：",**input_style),
+    form.GroupedDropdown("area_community",[],description="选择区域小区："),
+    form.Dropdown("product_id",product_seq(),description="选择产品套餐："),
+    form.Dropdown("status", [(0,"正常"),(1,"停用")],description="用户状态：（正常|停用）"),
+    form.Textbox("auth_begin_date",description="生效日期：",**input_style),
+    form.Textbox("auth_end_date",description="截止日期：",**input_style),
+    form.Radio("user_control",[(0,"不使用"),(1,"使用")],value=0,description="是否使用用户绑定策略："),
+    form.Textbox("concur_number",is_number,value=0,description="并发数：（0表示不限定|并发数不能超过20）",**input_style),
+    form.Radio("user_vlan",[(0,"不绑定"),(1,"绑定")],value=0,description="是否绑定VLAN："),
+    form.Radio("user_mac",[(0,"不绑定"),(1,"绑定")],value=0,description="是否绑定MAC："),
+    form.Textbox("ip_addr",description="IP地址：",**input_style),
+    form.Textbox("install_address",len_of(1,128),description="装机地址：",**input_style),
     form.Button("submit", type="submit",html="<b>提交</b>",**button_style),
 )

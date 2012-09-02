@@ -37,7 +37,7 @@ function deleteArea(nid,aid)
         <select id="node_id" name="node_id" >
             <option value="">节点选择</option>
             % for node in nodes:
-             <option value="${node.id}">${node.name}</option>
+             <option value="${node.id}" ${is_select(node.id,node_id)}>${node.name}</option>
             % endfor
         </select>
         <a class="button" href="javascript:queryAreas();">查询区域</a> 

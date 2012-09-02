@@ -41,6 +41,8 @@ def current_css(rpath):
     else:
         return ""
 
+def is_select(v1,v2):
+    return  str(v1 or '') in str(v2 or '')  and "selected" or ""
 
 def render(filename,**args):
     """ define mako render function """
@@ -51,6 +53,7 @@ def render(filename,**args):
         args['session'] = web.ctx.session 
         args["ctx"] = web.ctx
         args["current_css"] = current_css
+        args["is_select"] = is_select
         return mytemplate.render(**args)
     except:
         return exceptions.text_error_template().render()

@@ -6,6 +6,7 @@ from settings import config
 from utils import render
 import node
 import area
+import user
 import community
 import nas
 import product
@@ -19,6 +20,7 @@ app.mount("/area",area.app)
 app.mount("/community",community.app)
 app.mount("/nas",nas.app)
 app.mount("/product",product.app)
+app.mount("/user",user.app)
 
 '''session defined'''
 # session = web.session.Session(app, web.session.DiskStore('sessions'), {'count': 0})   
