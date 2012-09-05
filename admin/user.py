@@ -9,6 +9,7 @@ from utils import nextid
 from utils import encrypt
 from utils import decrypt
 from utils import currtime
+from settings import log
 import web
 import forms
 import models
@@ -40,8 +41,9 @@ class index():
                     db.delete(user)
                 db.commit()
                 db.flush()
-            except:
+            except Exception as e:
                 db.rollback()
+                log.error("delete user error: %s"%str(e))
                 return errorpage("删除失败")
         raise web.seeother("/user",absolute=True)
 
@@ -114,6 +116,7 @@ class index():
                 db.flush()
             except Exception,e:
                 db.rollback()
+                log.error("add user error: %s"%str(e))
                 return errorpage("新增用户失败 %s"%str(e))
             raise web.seeother("/user",absolute=True)
 
@@ -121,36 +124,59 @@ class index():
 class index():
     def GET(self):
         web.header("Content-Type","text/html; charset=utf-8")
-        node_id = web.input().get("node_id")
-        area_id = web.input().get("area_id")
+        user_id = web.input().get("user_id")
         db = get_db()
-        area = db.query(models.RadArea)\
-                 .filter(models.RadArea.node_id == node_id)\
-                 .filter(models.RadArea.area_id == area_id).first()
-        form = forms.area_update_form()
-        form.fill(area)
-        return render("baseform.html",form=form,title="修改区域",action="/area/update")   
+        user = db.query(models.RadUser).get(user_id)
+        form = forms.user_update_form()
+        form.fill(user)
+        form.area_community.args = getAreaCommunity(user.node_id)
+        form.area_community.value = "%s,%s"%(user.area_id,user.community_id)
+        form.password.value = decrypt(user.password)
+        return render("baseform.html",form=form,title="修改用户",action="/user/update")   
 
     def POST(self):
         web.header("Content-Type","text/html; charset=utf-8")
-        form = forms.area_update_form()
+        form = forms.user_update_form()
         if not form.validates(): 
-            return render("baseform.html",form=form,title="修改区域",action="/area/update")    
+            form.area_community.args = getAreaCommunity(form.d.node_id)
+            return render("baseform.html",form=form,title="修改用户",action="/user/update")    
         else:
             db = get_db()
-            area = db.query(models.RadArea)\
-                 .filter(models.RadArea.node_id == form.d.node_id)\
-                 .filter(models.RadArea.area_id == form.d.area_id).first()
-            if not area:
-                return errorpage("区域不存在")       
+            user = db.query(models.RadUser).get(form.d.id)
+            if not user:
+                return errorpage("用户不存在")       
             try:
-                area.area_name = form.d.area_name
+
+                area_community = form.d.area_community
+                attrs = area_community.split(",")
+                area_id = attrs[0]
+                community_id = attrs[1]
+
+                user.area_id = area_id
+                user.community_id = community_id
+                user.user_cname = form.d.user_cname
+                user.password = encrypt(form.d.password)
+                user.product_id = form.d.product_id
+                user.status = form.d.status
+                user.auth_begin_date = form.d.auth_begin_date
+                user.auth_end_date = form.d.auth_end_date
+                user.user_control = form.d.user_control
+                user.concur_number = form.d.concur_number
+                user.user_vlan = form.d.user_vlan
+                user.user_mac = form.d.user_mac
+                user.ip_addr = form.d.ip_addr
+                user.install_address = form.d.install_address
+                # user.balance = 0
+                # user.time_length = 0
+                # user.basic_fee = 0
+                # user.create_time = currtime()
                 db.commit()
                 db.flush()
             except Exception,e:
                 db.rollback()
-                return errorpage("修改区域失败 %s"%str(e))
-            raise web.seeother("/area",absolute=True)
+                log.error("update user error: %s"%str(e))
+                return errorpage("修改用户失败 %s"%str(e))
+            raise web.seeother("/user",absolute=True)
 
 
 

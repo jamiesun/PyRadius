@@ -5,6 +5,7 @@ from utils import route_app
 from utils import render
 from utils import get_db
 from utils import errorpage
+from settings import log
 import web
 import forms
 import models
@@ -39,8 +40,9 @@ class index():
                     db.delete(area)
                 db.commit()
                 db.flush()
-            except:
+            except Exception as e:
                 db.rollback()
+                log.error("delete area error: %s"%str(e))
                 return errorpage("删除失败")
         raise web.seeother("/area",absolute=True)                
 
@@ -74,6 +76,7 @@ class index():
                 db.flush()
             except Exception,e:
                 db.rollback()
+                log.error("add area error: %s"%str(e))
                 return errorpage("新增区域失败 %s"%str(e))
             raise web.seeother("/area",absolute=True)
 
@@ -109,6 +112,7 @@ class index():
                 db.flush()
             except Exception,e:
                 db.rollback()
+                log.error("update area error: %s"%str(e))
                 return errorpage("修改区域失败 %s"%str(e))
             raise web.seeother("/area",absolute=True)
 

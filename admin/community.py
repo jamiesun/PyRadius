@@ -5,6 +5,7 @@ from utils import route_app
 from utils import render
 from utils import get_db
 from utils import errorpage
+from settings import log
 import web
 import forms
 import models
@@ -48,8 +49,9 @@ class index():
                     db.delete(community)
                 db.commit()
                 db.flush()
-            except:
+            except Exception as e:
                 db.rollback()
+                log.error("delete community error: %s"%str(e))
                 return errorpage("删除失败")
         raise web.seeother("/community",absolute=True)                
 
@@ -85,6 +87,7 @@ class index():
                 db.flush()
             except Exception,e:
                 db.rollback()
+                log.error("add community error: %s"%str(e))
                 return errorpage("新增小区失败 %s"%str(e))
             raise web.seeother("/community",absolute=True)
 
@@ -123,6 +126,7 @@ class index():
                 db.flush()
             except Exception,e:
                 db.rollback()
+                log.error("update community error: %s"%str(e))
                 return errorpage("修改小区失败 %s"%str(e))
             raise web.seeother("/community",absolute=True)
 

@@ -6,6 +6,7 @@ from utils import render
 from utils import nextid
 from utils import get_db
 from utils import errorpage
+from settings import log
 import web
 import forms
 import models
@@ -33,6 +34,7 @@ class index():
                 db.flush()
             except Exception,e:
                 db.rollback()
+                log.error("delete nas error: %s"%str(e))
                 return errorpage("删除失败 %s"%str(e))
         raise web.seeother("/nas",absolute=True)                
 
@@ -68,6 +70,7 @@ class index():
                 db.flush()
             except Exception,e:
                 db.rollback()
+                log.error("add nes error: %s"%str(e))
                 return errorpage("新增Nas失败 %s"%str(e))
             raise web.seeother("/nas",absolute=True)
 
@@ -111,6 +114,7 @@ class index():
                 db.flush()
             except Exception,e:
                 db.rollback()
+                log.error("update nas error: %s"%str(e))
                 return errorpage("修改Nas失败 %s"%str(e))
             raise web.seeother("/nas",absolute=True)
 

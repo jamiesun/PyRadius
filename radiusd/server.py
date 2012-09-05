@@ -1,22 +1,20 @@
 #!/usr/bin/env python
 #coding:utf-8
-
 import socket, asyncoro
 from pyrad import dictionary
 from pyrad import host
 from pyrad import packet
 from settings import log 
-from handler import AccessRequestHandler
-from handler import AccountingRequestHandler
+from access_handler import AccessRequestHandler
+from accounting_handler import AccountingRequestHandler
 import sys
+import six
+import utils
 
 MaxPacketSize = 8192
 
 class PacketError(Exception):
     """Exception class for bogus packets
-
-    PacketError exceptions are only used inside the Server class to
-    abort processing of a packet.
     """
 
 handlers = {
@@ -28,7 +26,7 @@ class RudiusServer(host.Host):
 
     def __init__(self, address=[],hosts={},
                        authport=1812, acctport=1813,
-                       secret="secret",dict=dictionary.Dictionary()):
+                       secret=six.b("secret"),dict=dictionary.Dictionary()):
         host.Host.__init__(self,authport,acctport,dict=dict)
         self.hosts = hosts
         self.address = address
@@ -53,34 +51,36 @@ class RudiusServer(host.Host):
             acctsock.setsockopt(socket.SOL_SOCKET,socket.SO_RCVBUF,1024*10*20)
             acctsock.bind((addr, self.acctport))
             asyncoro.Coro(self.data_received,acctsock)     
-
-
+           
+    def CreateAuthPacket(self, **args):
+        return utils.AuthPacket2(dict=self.dict,**args)
 
     def data_received(self,sock,coro=None):
         while True:
             try:
                 data, (host, port) = yield sock.recvfrom(MaxPacketSize)
                 if host not in self.hosts:
-                    log.error(u'非法的请求 ' + host)
+                    log.error('Illegal request' + host)
                     continue
             except:
                 continue
 
             try:
-                pkt = self.CreatePacket(packet=data)
+                pkt = self.CreateAuthPacket(packet=data,secret=self.secret)
             except packet.PacketError as err:
-                log.error(u'数据包错误: ' + str(err))
+                log.error('Packet error:' + str(err))
                 return            
 
             pkt.source = (host, port)
-            pkt.secret = self.secret
             pkt.sock = sock
 
             try:
                 pkt_handler = handlers[pkt.code]
                 yield pkt_handler.process(pkt)
-            except:
-                log.error(u'请求处理失败 %s: %s' % (host, str(err)))  
+            except Exception as err:
+                import traceback
+                traceback.print_exc()
+                log.error('Request process failed %s: %s' % (host, str(err)))  
 
 
 

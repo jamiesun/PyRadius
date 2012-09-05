@@ -8,6 +8,7 @@ from utils import get_db
 from utils import errorpage
 from utils import encrypt
 from utils import decrypt
+from settings import log
 import web
 import forms
 import models
@@ -39,6 +40,7 @@ class index():
                 db.flush()
             except Exception,e:
                 db.rollback()
+                log.error("delete node error: %s"%str(e))
                 return errorpage("删除失败 %s"%str(e))
         raise web.seeother("/node",absolute=True)
 
@@ -90,6 +92,7 @@ class index():
                 db.flush()
             except Exception,e:
                 db.rollback()
+                log.error("add node error: %s"%str(e))
                 return errorpage("节点新增失败 %s"%str(e))
 
             raise web.seeother("/node",absolute=True)
@@ -160,6 +163,7 @@ class index():
                 db.flush()
             except Exception,e:
                 db.rollback()
+                log.error("update node error: %s"%str(e))
                 return errorpage("节点修改失败 %s"%str(e))
             raise web.seeother("/node",absolute=True)
 

@@ -13,6 +13,7 @@ from models import engine
 
 session = scoped_session(sessionmaker(bind=engine,autocommit=False, autoflush=False))()
 def get_db():
+    print "connection id:",id(session.connection)
     return session
 
 APP_DIR = "./"
@@ -119,7 +120,6 @@ def decrypt(s,key=128):
         return b.decode("utf8")
     except:
         return "failed"
-
 
 
 

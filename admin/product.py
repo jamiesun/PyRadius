@@ -5,6 +5,7 @@ from utils import route_app
 from utils import render
 from utils import get_db
 from utils import errorpage
+from settings import log
 import web
 import forms
 import models
@@ -57,6 +58,7 @@ class index():
                 db.flush()
             except Exception,e:
                 db.rollback()
+                log.error("add product error: %s"%str(e))
                 return errorpage("产品新增失败 %s"%str(e))
 
             raise web.seeother("/product",absolute=True)             
@@ -100,7 +102,8 @@ class index():
                 db.flush()
             except Exception,e:
                 db.rollback()
-                return errorpage("修改新增失败 %s"%str(e))
+                log.error("update product error: %s"%str(e))
+                return errorpage("修改套餐失败 %s"%str(e))
 
             raise web.seeother("/product",absolute=True) 
 
@@ -120,5 +123,6 @@ class index():
                     db.flush()
             except Exception,e:
                 db.rollback()
+                log.error("delete product error: %s"%str(e))
                 return errorpage("删除失败 %s"%str(e))
         raise web.seeother("/product",absolute=True)   

@@ -163,13 +163,33 @@ product_update_form = form.Form(
 
 
 user_add_form = form.Form(
-    form.Textbox("node_id",description="节点：",readonly="readonly"),
+    form.Textbox("node_id",description="节点：",readonly="readonly",**input_style),
     form.Textbox("user_name",is_alphanum2(6,32),description="上网帐号：（字母和数字组合 6-32位以内）",**input_style),
     form.Textbox("user_cname",len_of(1,32),description="客户名称：（32个汉字以内）",**input_style),
     form.Password("password",is_alphanum2(6,20),description="上网密码(6-20字母数字)：",**input_style),
     form.GroupedDropdown("area_community",[],description="选择区域小区："),
     form.Dropdown("product_id",product_seq(),description="选择产品套餐："),
-    form.Dropdown("status", [(0,"正常"),(1,"停用")],description="用户状态：（正常|停用）"),
+    form.Dropdown("status", [(0,"未生效"),(1,"有效"),(2,"停机"),(3,"销户"),(4,"到期")],description="用户状态："),
+    form.Textbox("auth_begin_date",description="生效日期：",**input_style),
+    form.Textbox("auth_end_date",description="截止日期：",**input_style),
+    form.Radio("user_control",[(0,"不使用"),(1,"使用")],value=0,description="是否使用用户绑定策略："),
+    form.Textbox("concur_number",is_number,value=0,description="并发数：（0表示不限定|并发数不能超过20）",**input_style),
+    form.Radio("user_vlan",[(0,"不绑定"),(1,"绑定")],value=0,description="是否绑定VLAN："),
+    form.Radio("user_mac",[(0,"不绑定"),(1,"绑定")],value=0,description="是否绑定MAC："),
+    form.Textbox("ip_addr",description="IP地址：",**input_style),
+    form.Textbox("install_address",len_of(1,128),description="装机地址：",**input_style),
+    form.Button("submit", type="submit",html="<b>提交</b>",**button_style),
+)
+
+user_update_form = form.Form(
+    form.Hidden("id",readonly="readonly"),
+    form.Textbox("node_id",description="节点：",readonly="readonly",**input_style),
+    form.Textbox("user_name",description="上网帐号：（字母和数字组合 6-32位以内）",readonly="readonly",**input_style),
+    form.Textbox("user_cname",len_of(1,32),description="客户名称：（32个汉字以内）",**input_style),
+    form.Password("password",is_alphanum2(6,20),description="上网密码(6-20字母数字)：",**input_style),
+    form.GroupedDropdown("area_community",[],description="选择区域小区："),
+    form.Dropdown("product_id",product_seq(),description="选择产品套餐："),
+    form.Dropdown("status", [(0,"未生效"),(1,"有效"),(2,"停机"),(3,"销户"),(4,"到期")],description="用户状态："),
     form.Textbox("auth_begin_date",description="生效日期：",**input_style),
     form.Textbox("auth_end_date",description="截止日期：",**input_style),
     form.Radio("user_control",[(0,"不使用"),(1,"使用")],value=0,description="是否使用用户绑定策略："),
