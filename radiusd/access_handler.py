@@ -1,19 +1,18 @@
 #!/usr/bin/env python
 #coding:utf-8
-from __future__ import unicode_literals  
 from pyrad import packet
 from settings import log
 from logging import DEBUG
 import service
 import utils
 
-class AccessRequestHandler(): 
+class _AccessRequestHandler(): 
 
     def process(self,req):
         attr_keys = req.keys()
         if log.isEnabledFor(DEBUG):
             log.debug("::Received an authentication request")
-            log.debug("Attributes: ")
+            log.debug("Attributes: ")        
             for attr in attr_keys:
                 log.debug( "%s: %s" % (attr, req[attr]))
 
@@ -117,7 +116,7 @@ class AccessRequestHandler():
         reply.code=packet.AccessReject
         # import pdb
         # pdb.set_trace()
-        yield req.sock.sendto(reply.ReplyPacket(), reply.source)   
+        req.sock.sendto(reply.ReplyPacket(), reply.source)   
 
         if log.isEnabledFor(DEBUG):
             log.debug("::error:%s"%err)
@@ -132,15 +131,16 @@ class AccessRequestHandler():
         reply.source = req.source
         reply.code=packet.AccessAccept
 
-        reply.set_framed_ip_addr(args.get("ipaddr"))
-        reply.set_filter_id(nas.vendor_id,args.get("bandcode"))
-        reply.set_special_str(nas.vendor_id,"context",args.get("domain_code"))
-        reply.set_special_int(nas.vendor_id,"input_max_limit",args.get("input_max_limit"))
-        reply.set_special_int(nas.vendor_id,"output_max_limit",args.get("output_max_limit"))
-        reply.set_special_str(nas.vendor_id,"input_rate_code",args.get("input_rate_code"))
-        reply.set_special_str(nas.vendor_id,"output_rate_code",args.get("output_rate_code"))
+        if args:
+            reply.set_framed_ip_addr(args.get("ipaddr"))
+            reply.set_filter_id(nas.vendor_id,args.get("bandcode"))
+            reply.set_special_str(nas.vendor_id,"context",args.get("domain_code"))
+            reply.set_special_int(nas.vendor_id,"input_max_limit",args.get("input_max_limit"))
+            reply.set_special_int(nas.vendor_id,"output_max_limit",args.get("output_max_limit"))
+            reply.set_special_str(nas.vendor_id,"input_rate_code",args.get("input_rate_code"))
+            reply.set_special_str(nas.vendor_id,"output_rate_code",args.get("output_rate_code"))
 
-        yield req.sock.sendto(reply.ReplyPacket(), reply.source)     
+        req.sock.sendto(reply.ReplyPacket(), reply.source)     
 
         if log.isEnabledFor(DEBUG):
             log.debug("::send an authentication accept")
@@ -148,3 +148,8 @@ class AccessRequestHandler():
             for attr in reply.keys():
                 log.debug( "%s: %s" % (attr, reply[attr]))             
 
+
+_handler = _AccessRequestHandler()
+
+def accessHandler(req):
+    _handler.process(req)

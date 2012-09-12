@@ -1,31 +1,33 @@
 #!/usr/bin/env python
 #coding:utf-8
 from gevent.server import DatagramServer
-from gevent import socket
+from pyrad import dictionary
+from pyrad import host
+from settings import log 
 from access_handler import accessHandler
 from accounting_handler import accountingHandler
-from pyrad import dictionary,host
-from settings import log 
+import sys
 import six
 import utils
 import gevent
 
+
 MaxPacketSize = 8192
 
-hosts = ['198.168.8.139','127.0.0.1']
+
+class PacketError(Exception):
+    """Exception class for bogus packets
+    """
 
 class RudiusAuthServer(DatagramServer):
 
     def __init__(self, address,hosts={},secret=six.b("secret"),
-                       dict=dictionary.Dictionary("dictionary")):
-        DatagramServer.__init__(self,address)
+                       dict=dictionary.Dictionary("dictionary"),pool_szie=10):
+        DatagramServer.__init__('%:%'%address)
         self.hosts = hosts
         self.address = address
         self.dict = dict
         self.secret = secret
-        self.start()
-        self.socket.setsockopt(socket.SOL_SOCKET,
-            socket.SO_RCVBUF,10240000)
 
     def handle(self,data, address):
         if address[0] not in self.hosts:
@@ -35,24 +37,19 @@ class RudiusAuthServer(DatagramServer):
         try:
             pkt = utils.AuthPacket2(packet=data,dict=self.dict,secret=self.secret)
             pkt.source,pkt.sock = address,self.socket
-            gevent.spawn(accessHandler,pkt)  
-            #self.pool.apply_async(accessHandler,(pkt))   
+            accessHandler(pkt)     
         except Exception as err:
             log.error(u'process packet error:' + str(err))  
-
 
 class RudiusAcctServer(DatagramServer):
 
     def __init__(self, address,hosts={},secret=six.b("secret"),
-                       dict=dictionary.Dictionary("dictionary")):
-        DatagramServer.__init__(self,address)
+                       dict=dictionary.Dictionary("dictionary"),pool_szie=10):
+        DatagramServer.__init__('%:%'%address)
         self.hosts = hosts
         self.address = address
         self.dict = dict
         self.secret = secret
-        self.start()
-        self.socket.setsockopt(socket.SOL_SOCKET,
-            socket.SO_RCVBUF,10240000)
 
     def handle(self,data, address):
         if address[0] not in self.hosts:
@@ -60,15 +57,28 @@ class RudiusAcctServer(DatagramServer):
             return 
 
         try:
-            pkt = utils.AcctPacket2(packet=data,dict=self.dict,secret=self.secret)
+            pkt = self.utils.AcctPacket2(packet=data,dict=self.dict,secret=self.secret)
             pkt.source,pkt.sock = address,self.socket
-            gevent.spawn(accountingHandler,pkt)    
+            accountingHandler(pkt)    
         except Exception as err:
             log.error(u'process packet error:' + str(err))     
 
 
 if __name__ == '__main__':
+    hosts = ['198.168.8.139','127.0.0.1']
+
     authsrv = RudiusAuthServer(address=('0.0.0.0',1812),hosts=hosts)
-    acctsrv = RudiusAcctServer(address=('0.0.0.0',1813),hosts=hosts)
-    gevent.run()
-    
+    acctsrv = RudiusAuthServer(address=('0.0.0.0',1813),hosts=hosts)
+
+    job1 = gevent.spawn(authsrv.serve_forever)
+    job2 = gevent.spawn(acctsrv.serve_forever)
+    gevent.joinall([job1, job2])
+    # gevent.run()
+
+
+
+# while True:
+#     try:
+#         x = sys.stdin.readline()
+#     except KeyboardInterrupt:
+#         break

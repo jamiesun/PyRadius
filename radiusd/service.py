@@ -2,6 +2,7 @@
 #coding:utf-8
 #from settings import config
 from sqlalchemy.orm import scoped_session,sessionmaker
+from caches import online_cache,user_cache
 from models import engine
 from settings import log
 import models
@@ -110,5 +111,15 @@ def set_user_vlanid2(user_id,vlanid2):
 def get_product(pid):
     return get_db().query(models.RadProduct).get(pid)
 
+def is_online(olkey):
+    return online_cache.has_key(olkey)
+
 def get_online_num(username):
-    return 0
+    return len(online_cache)
+
+def add_online(key,value):
+    online_cache[key] = value
+
+def rmv_online(key):
+    return online_cache.pop(key,None)
+

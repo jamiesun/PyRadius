@@ -57,6 +57,13 @@ def decrypt(s,key=128):
         return "failed"
 
 
+def is_valid_date(dstr1,dstr2):
+    d1 = datetime.datetime.strptime("%s 00:00:00"%dstr1,"%Y-%m-%d %H:%M:%S")
+    d2 = datetime.datetime.strptime("%s 23:59:59"%dstr2,"%Y-%m-%d %H:%M:%S")
+    now = datetime.datetime.now()
+    return now >= d1 and now <= d2        
+
+
 class AuthPacket2(AuthPacket):
 
     def __init__(self, code=AccessRequest, id=None, secret=six.b(''),
@@ -156,12 +163,132 @@ class AcctPacket2(AcctPacket):
             authenticator=None, **attributes):
         AcctPacket.__init__(self, code, id, secret, authenticator, **attributes)
 
+    def get_username(self):
+        try:return tools.DecodeString(self.get(1)[0])
+        except:return None        
 
-def is_valid_date(dstr1,dstr2):
-    d1 = datetime.datetime.strptime("%s 00:00:00"%dstr1,"%Y-%m-%d %H:%M:%S")
-    d2 = datetime.datetime.strptime("%s 23:59:59"%dstr2,"%Y-%m-%d %H:%M:%S")
-    now = datetime.datetime.now()
-    return now >= d1 and now <= d2
+    def get_macaddr(self):
+        try:return tools.DecodeString(self.get(31)[0]).replace("-",":")
+        except:return None
+
+    def get_nasaddr(self):
+        try:return tools.DecodeAddress(self.get(4)[0])
+        except:return None
+
+    def get_nasport(self):
+        try:return tools.EncodeInteger(self.get(5)[0])
+        except:return None
+
+    def get_servicetype(self):
+        try:return tools.EncodeInteger(self.get(0)[0])
+        except:return None
+        
+    def get_framedipaddr(self):
+        try:return tools.DecodeAddress(self.get(8)[0])
+        except:return None
+
+    def get_framednetmask(self):
+        try:return tools.DecodeAddress(self.get(9)[0])
+        except:return None
+
+    def get_nasclass(self):
+        try:return tools.DecodeString(self.get(25)[0])
+        except:return None   
+
+    def get_sessiontimeout(self):
+        try:return tools.EncodeInteger(self.get(27)[0])
+        except:return None
+
+    def get_callingstationid(self):
+        try:return tools.DecodeString(self.get(31)[0])
+        except:return None   
+
+    def get_acctstatustype(self):
+        try:return tools.EncodeInteger(self.get(40)[0])
+        except:return None
+
+    def get_acctinputoctets(self):
+        try:return tools.EncodeInteger(self.get(42)[0])
+        except:return None
+
+    def get_acctoutputoctets(self):
+        try:return tools.EncodeInteger(self.get(43)[0])
+        except:return None
+
+    def get_acctsessionid(self):
+        try:return tools.DecodeString(self.get(44)[0])
+        except:return None                                                         
+
+    def get_acctsessiontime(self):
+        try:return tools.EncodeInteger(self.get(46)[0])
+        except:return None                                                             
+
+    def get_acctinputpackets(self):
+        try:return tools.EncodeInteger(self.get(47)[0])
+        except:return None                                                       
+
+    def get_acctoutputpackets(self):
+        try:return tools.EncodeInteger(self.get(48)[0])
+        except:return None           
+
+    def get_acctterminatecause(self):
+        try:return tools.EncodeInteger(self.get(49)[0])
+        except:return None           
+
+    def get_acctinputgigawords(self):
+        try:return tools.EncodeInteger(self.get(52)[0])
+        except:return None       
+
+    def get_acctoutputgigawords(self):
+        try:return tools.EncodeInteger(self.get(53)[0])
+        except:return None                                                         
+
+    def get_eventtimestamp(self,timetype=0):
+        try:
+            _time = tools.DecodeDate(self.get(55)[0])
+            if timetype == 0:
+                return datetime.datetime.fromtimestamp(_time).strptime("%Y-%m-%d %H:%M:%S")
+            else:
+                return datetime.datetime.fromtimestamp(_time-(8*3600)).strptime("%Y-%m-%d %H:%M:%S")
+        except:
+            return None
+
+    def get_nasporttype(self):
+        try:return tools.EncodeInteger(self.get(61)[0])
+        except:return None   
+
+    def get_nasportid(self):
+        try:return tools.DecodeString(self.get(87)[0])
+        except:return None        
+
+    def get_ticket(self):
+        return dict(
+        username = self.get_username(),
+        macaddr = self.get_macaddr(),
+        nasaddr = self.get_nasaddr(),
+        nasport = self.get_nasport(),
+        servicetype = self.get_servicetype(),
+        framedipaddr = self.get_framedipaddr(),
+        framednetmask = self.get_framednetmask(),
+        nasclass = self.get_nasclass(),
+        sessiontimeout = self.get_sessiontimeout(),
+        callingstationid = self.get_callingstationid(),
+        acctstatustype = self.get_acctstatustype(),
+        acctinputoctets = self.get_acctinputoctets(),
+        acctoutputoctets = self.get_acctoutputoctets(),
+        acctsessionid = self.get_acctsessionid(),
+        acctsessiontime = self.get_acctsessiontime(),
+        acctinputpackets = self.get_acctinputpackets(),
+        acctoutputpackets = self.get_acctoutputpackets(),
+        acctterminatecause = self.get_acctterminatecause(),
+        acctinputgigawords = self.get_acctinputgigawords(),
+        acctoutputgigawords = self.get_acctoutputgigawords(),
+        eventtimestamp = self.get_eventtimestamp(),
+        nasporttype=self.get_nasporttype(),
+        nasportid=self.get_nasportid())
+
+
+
 
 
 
