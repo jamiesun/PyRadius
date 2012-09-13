@@ -64,7 +64,7 @@ class _AccountingRequestHandler():
             framedipaddr = req.get_framedipaddr(),
             macaddr = req.get_macaddr(),
             nasportid = req.get_nasportid(),
-            statustype = STATUS_TYPE_START)
+            startsource = STATUS_TYPE_START)
 
         service.add_online(_key,online)
 
@@ -82,11 +82,11 @@ class _AccountingRequestHandler():
             sessiontime = req.get_acctsessiontime()
             _stoptime = datetime.datetime.now()
             _starttime = _stoptime + datetime.timedelta(seconds=-sessiontime)
-            ticket.acctstarttime = _starttime.strftime( "%Y-%m-%d %H:%M:%S")
-            ticket.acctstoptime = _stoptime.strftime( "%Y-%m-%d %H:%M:%S")
-
-
-
+            ticket['acctstarttime'] = _starttime.strftime( "%Y-%m-%d %H:%M:%S")
+            ticket['acctstoptime'] = _stoptime.strftime( "%Y-%m-%d %H:%M:%S")
+            ticket['startsource'] = STATUS_TYPE_STOP
+            ticket['stopsource'] = STATUS_TYPE_STOP
+            ticket['nodeid'] = nas.id
         else:
             pass
 
