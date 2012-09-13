@@ -32,13 +32,12 @@ ${self.head()}
         <li> <a href="/" class="nav-top-item no-submenu">
           <!-- Add the class "no-submenu" to menu items with no sub menu -->
           管理首页 </a> </li>
-        <li> <a href="#" class='nav-top-item ${current_css(["/node","/nas","/product","/area","/community"])}'>
+        <li> <a href="#" class='nav-top-item ${current_css(["/node","/nas","/product","/group"])}'>
           <!-- Add the class "current" to current menu item -->
           系统管理 </a>
           <ul>
             <li><a class='${current_css("/node")}' href="/node">节点管理</a></li>
-            <li><a class='${current_css("/area")}' href="/area">区域管理</a></li>
-            <li><a class='${current_css("/community")}' href="/community">小区管理</a></li>
+            <li><a class='${current_css("/group")}' href="/group">用户组管理</a></li>
             <li><a class='${current_css("/nas")}' href="/nas">Nas管理</a></li>
             <li><a class='${current_css("/product")}' href="/product">套餐管理</a></li>
           </ul>
@@ -49,7 +48,6 @@ ${self.head()}
             <li><a class='${current_css("/roster")}' href="/roster">黑白名单管理</a></li>
             <li><a class='${current_css("/online")}' href="/online">在线用户管理</a></li>
             <li><a class='${current_css("/ticket")}' href="/ticket">上网记录查询</a></li>
-            <li><a class='${current_css("/packet")}' href="/packet">用户消息查询</a></li>
             <li><a class='${current_css("/onlinestat")}' href="/onlinestat">在线用户统计</a></li>
           </ul>
         </li>

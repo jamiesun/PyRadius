@@ -6,6 +6,7 @@ from utils import render
 from utils import get_db
 from utils import errorpage
 from settings import log
+from decimal import Decimal
 import web
 import forms
 import models
@@ -42,7 +43,7 @@ class index():
                 radproduct.name = form.d.name
                 radproduct.policy = form.d.policy
                 radproduct.fee_num = form.d.fee_num
-                radproduct.fee_price = form.d.fee_price
+                radproduct.fee_price = int(Decimal(form.d.fee_price)*100)
                 radproduct.concur_number = form.d.concur_number
                 radproduct.bind_mac = form.d.bind_mac
                 radproduct.bind_vlan = form.d.bind_vlan
@@ -72,6 +73,7 @@ class index():
         db = get_db()
         product = db.query(models.RadProduct).get(productid)
         form.fill(product)
+        form.fee_price.set_value(product.fee_price/100.00)
         return render("baseform.html",form=form,title="修改产品套餐",action="/product/update/")   
 
     def POST(self,none):
@@ -87,7 +89,7 @@ class index():
             try:
                 product.name = form.d.name
                 product.fee_num = form.d.fee_num
-                product.fee_price = form.d.fee_price
+                product.fee_price = int(Decimal(form.d.fee_price)*100)
                 product.concur_number = form.d.concur_number
                 product.bind_mac = form.d.bind_mac
                 product.bind_vlan = form.d.bind_vlan

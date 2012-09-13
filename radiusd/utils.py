@@ -6,7 +6,7 @@ from pyrad.packet import AccessRequest
 from pyrad.packet import AccessAccept
 from pyrad.packet import AccountingRequest
 from settings import vendor_cfg
-from settings import log
+from settings import radiuslog
 import datetime
 import hashlib
 import six
@@ -96,7 +96,7 @@ class AuthPacket2(AuthPacket):
             if vendor_cfg[int(vendor)]['filter_id']:
                 self.AddAttribute(11,tools.EncodeString(filterid))
         except Exception, e:
-            log.error("set_filter_id error,%s"%(str(e)))        
+            radiuslog.error("set_filter_id error,%s"%(str(e)))        
 
     def set_special_str(self,vendor,name,value):
         if not value:return
@@ -107,7 +107,7 @@ class AuthPacket2(AuthPacket):
             if key:
                 self.AddAttribute(key,tools.EncodeString(value))
         except Exception, e:
-            log.error("set_special error,vendor=%s,name=%s,value=%s;err=%s"\
+            radiuslog.error("set_special error,vendor=%s,name=%s,value=%s;err=%s"\
                 %(vendor,name,value,str(e)))
 
     def set_special_int(self,vendor,name,value):
@@ -117,7 +117,7 @@ class AuthPacket2(AuthPacket):
             key = vendor_cfg[int(vendor)][name]
             self.AddAttribute(key,tools.EncodeInteger(value))
         except Exception, e:
-            log.error("set_special error,vendor=%s,name=%s,value=%s;err=%s"\
+            radiuslog.error("set_special error,vendor=%s,name=%s,value=%s;err=%s"\
                 %(vendor,name,value,str(e)))            
 
     def get_nasaddr(self):
@@ -176,11 +176,11 @@ class AcctPacket2(AcctPacket):
         except:return None
 
     def get_nasport(self):
-        try:return tools.EncodeInteger(self.get(5)[0])
+        try:return tools.DecodeInteger(self.get(5)[0])
         except:return None
 
     def get_servicetype(self):
-        try:return tools.EncodeInteger(self.get(0)[0])
+        try:return tools.DecodeInteger(self.get(0)[0])
         except:return None
         
     def get_framedipaddr(self):
@@ -196,7 +196,7 @@ class AcctPacket2(AcctPacket):
         except:return None   
 
     def get_sessiontimeout(self):
-        try:return tools.EncodeInteger(self.get(27)[0])
+        try:return tools.DecodeInteger(self.get(27)[0])
         except:return None
 
     def get_callingstationid(self):
@@ -204,15 +204,15 @@ class AcctPacket2(AcctPacket):
         except:return None   
 
     def get_acctstatustype(self):
-        try:return tools.EncodeInteger(self.get(40)[0])
+        try:return tools.DecodeInteger(self.get(40)[0])
         except:return None
 
     def get_acctinputoctets(self):
-        try:return tools.EncodeInteger(self.get(42)[0])
+        try:return tools.DecodeInteger(self.get(42)[0])
         except:return None
 
     def get_acctoutputoctets(self):
-        try:return tools.EncodeInteger(self.get(43)[0])
+        try:return tools.DecodeInteger(self.get(43)[0])
         except:return None
 
     def get_acctsessionid(self):
@@ -220,27 +220,27 @@ class AcctPacket2(AcctPacket):
         except:return None                                                         
 
     def get_acctsessiontime(self):
-        try:return tools.EncodeInteger(self.get(46)[0])
+        try:return tools.DecodeInteger(self.get(46)[0])
         except:return None                                                             
 
     def get_acctinputpackets(self):
-        try:return tools.EncodeInteger(self.get(47)[0])
+        try:return tools.DecodeInteger(self.get(47)[0])
         except:return None                                                       
 
     def get_acctoutputpackets(self):
-        try:return tools.EncodeInteger(self.get(48)[0])
+        try:return tools.DecodeInteger(self.get(48)[0])
         except:return None           
 
     def get_acctterminatecause(self):
-        try:return tools.EncodeInteger(self.get(49)[0])
+        try:return tools.DecodeInteger(self.get(49)[0])
         except:return None           
 
     def get_acctinputgigawords(self):
-        try:return tools.EncodeInteger(self.get(52)[0])
+        try:return tools.DecodeInteger(self.get(52)[0])
         except:return None       
 
     def get_acctoutputgigawords(self):
-        try:return tools.EncodeInteger(self.get(53)[0])
+        try:return tools.DecodeInteger(self.get(53)[0])
         except:return None                                                         
 
     def get_eventtimestamp(self,timetype=0):
@@ -254,7 +254,7 @@ class AcctPacket2(AcctPacket):
             return None
 
     def get_nasporttype(self):
-        try:return tools.EncodeInteger(self.get(61)[0])
+        try:return tools.DecodeInteger(self.get(61)[0])
         except:return None   
 
     def get_nasportid(self):

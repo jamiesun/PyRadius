@@ -47,9 +47,9 @@ function deleteProduct(nid)
                     <td>${{0:u"买断包月",1:u"预付费时长"}.get(product.policy)}</td>
                     <td>
                     % if product.policy == 0:
-                        ${product.fee_price}元/${product.fee_num}月
+                        ${product.fee_price/100.00}元/${product.fee_num}月
                     % elif product.policy == 1:
-                        ${product.fee_price}元/每小时
+                        ${product.fee_price/100.00}元/每小时
                     % endif
                     </td>
                     <td>${product.concur_number}</td>

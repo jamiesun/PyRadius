@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 #coding:utf-8
 from pyrad import packet
-from settings import log
+from settings import radiuslog
 from logging import DEBUG
 import service
 import utils
@@ -10,11 +10,11 @@ class _AccessRequestHandler():
 
     def process(self,req):
         attr_keys = req.keys()
-        if log.isEnabledFor(DEBUG):
-            log.debug("::Received an authentication request")
-            log.debug("Attributes: ")        
+        if radiuslog.isEnabledFor(DEBUG):
+            radiuslog.debug("::Received an authentication request")
+            radiuslog.debug("Attributes: ")        
             for attr in attr_keys:
-                log.debug( "%s: %s" % (attr, req[attr]))
+                radiuslog.debug( "%s: %s" % (attr, req[attr]))
 
         nasaddr = req.get_nasaddr()
         macaddr = req.get_macaddr()
@@ -86,7 +86,7 @@ class _AccessRequestHandler():
             return True
         if not user.mac_addr:
             if macaddr:
-                service.set_user_mac(user.id,macaddr)
+                service.set_user_mac(user.user_name,macaddr)
                 return True
         else:
             return user.macaddr.lower() != macaddr.lower()
@@ -96,14 +96,14 @@ class _AccessRequestHandler():
             return 0
         if user.vlan_id == 0:
             if vlanid != 0 and vlanid != 4096:
-                service.set_user_vlanid(user.id,vlanid)
+                service.set_user_vlanid(user.user_name,vlanid)
         else:
             if user.vlan_id != vlanid:
                 return 1
 
         if user.vlan_id2 == 0:
             if vlanid2 != 0 and vlanid2 != 4096:
-                service.set_user_vlanid2(user.id,vlanid2)
+                service.set_user_vlanid2(user.user_name,vlanid2)
         else:
             if user.vlan_id2 != vlanid2:
                 return 1
@@ -118,12 +118,7 @@ class _AccessRequestHandler():
         # pdb.set_trace()
         req.sock.sendto(reply.ReplyPacket(), reply.source)   
 
-        if log.isEnabledFor(DEBUG):
-            log.debug("::error:%s"%err)
-            log.debug("::send an authentication reject")
-            log.debug("Attributes: ")
-            for attr in reply.keys():
-                log.debug( "%s: %s" % (attr, reply[attr]))           
+        radiuslog.error("[Auth]  send an authentication reject,err:%s"%err)        
 
     def send_accept(self,req,nas,**args):
         service.incr_stat(service.STAT_AUTH_ACCEPT)
@@ -142,12 +137,9 @@ class _AccessRequestHandler():
 
         req.sock.sendto(reply.ReplyPacket(), reply.source)     
 
-        if log.isEnabledFor(DEBUG):
-            log.debug("::send an authentication accept")
-            log.debug("Attributes: ")
-            for attr in reply.keys():
-                log.debug( "%s: %s" % (attr, reply[attr]))             
-
+        if radiuslog.isEnabledFor(DEBUG):
+            radiuslog.debug("[Auth] send an authentication accept,user[%s],nas[%s]"\
+                %(req.get_username(),nas.ip_addr))
 
 _handler = _AccessRequestHandler()
 

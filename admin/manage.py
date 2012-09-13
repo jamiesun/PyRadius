@@ -1,13 +1,13 @@
 #!/usr/bin/env python
 #coding:utf-8
-
+# from gevent import monkey; monkey.patch_all()
+# from gevent.wsgi import WSGIServer
 from utils import route_app
 from settings import config
 from utils import render
 import node
-import area
+import group
 import user
-import community
 import nas
 import product
 import web
@@ -16,8 +16,7 @@ import web
 """ application defined """
 app  = route_app()
 app.mount("/node",node.app)
-app.mount("/area",area.app)
-app.mount("/community",community.app)
+app.mount("/group",group.app)
 app.mount("/nas",nas.app)
 app.mount("/product",product.app)
 app.mount("/user",user.app)
@@ -36,11 +35,17 @@ def context_hook():
 
 app.add_processor(web.loadhook(context_hook))   
 
+@app.route("/test")
+class test():
+    def GET(self):
+        return "ok"
 
-@app.route("/avicon.ico")
+
+
+@app.route("/favicon.ico")
 class js():
-    def GET(self,filename):
-        raise web.seeother("/static/avicon.ico",absolute=True)
+    def GET(self):
+        raise web.seeother("/static/favicon.ico",absolute=True)
 
 @app.route("/index")
 class home():
@@ -90,5 +95,6 @@ web.config.debug = False
 if __name__ == "__main__":
     import  platform
     if  platform.system() == "Windows":
-        web.config.debug = True
+        web.config.debug = False
+        #WSGIServer(('', 8080), application,log=None).serve_forever()
         app.run()

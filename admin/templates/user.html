@@ -61,7 +61,7 @@ function deleteUser(uid)
                     <td>${user.auth_begin_date}</td>
                     <td>${user.auth_end_date}</td>
                     <td>${user.ip_addr}</td>
-                    <td>${{0:u"正常",1:u"停用"}.get(user.status)}</td>
+                    <td>${{0:u"未生效",1:u"有效",2:u"停机",3:u"销户",4:u"到期"}.get(user.status)}</td>
                     <td>
                     <a href="/user/update?user_id=${user.id}" ><img src="/images/icons/pencil.png" alt="Edit"></a> 
                     <a href="javascript:deleteUser('${user.id}');" ><img src="/images/icons/cross.png" alt="Delete"></a> 

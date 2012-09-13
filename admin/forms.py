@@ -35,7 +35,7 @@ is_url = form.regexp('[a-zA-z]+://[^\s]*',"无效的url")
 is_phone = form.regexp('^(\(\d{3,4}\)|\d{3,4}-)?\d{7,8}$',"无效的电话号码")
 is_idcard = form.regexp('^\d{15}$|^\d{18}$|^\d{17}[Xx]$',"无效的身份证号码")
 is_ip = form.regexp("\d+\.\d+\.\d+\.\d+","无效ip")
-is_rmb = form.regexp('^(([1-9]\d*)|0)(\.\d{2})?$',"无效的人民币金额")
+is_rmb = form.regexp('^(([1-9]\d*)|0)(\.\d{1,2})?$',"无效的人民币金额")
 len_of = lambda x,y:form.regexp(".{%s,%s}$"%(x,y),"长度必须为%s到%s"%(x,y))
 
 
@@ -69,36 +69,22 @@ node_update_form = form.Form(
 )
 
 
-area_add_form = form.Form(
+group_add_form = form.Form(
     form.Textbox("node_id",description="节点编号:(由定长6位数字或字母组成）",readonly="readonly",**input_style),
-    form.Textbox("area_id", is_alphanum2(1,10),description="区域编码：（由10位不定长的字母或数字组合）",**input_style),
-    form.Textbox("area_name",len_of(1,32), description="区域名称：（32个汉字以内）",**input_style),
+    form.Textbox("group_id", is_alphanum2(1,10),description="用户组编码：（由10位不定长的字母或数字组合）",**input_style),
+    form.Textbox("group_name",len_of(1,32), description="用户组名称：（32个汉字以内）",**input_style),
     form.Button("submit", type="submit",html="<b>提交</b>",**button_style),
 )
 
-area_update_form = form.Form(
+group_update_form = form.Form(
     form.Textbox("node_id",description="节点编号:(由定长6位数字或字母组成）",readonly="readonly",**input_style),
-    form.Textbox("area_id",description="区域编码：（由10位不定长的字母或数字组合）",readonly="readonly",**input_style),
-    form.Textbox("area_name",len_of(1,32), description="区域名称：（32个汉字以内）",**input_style),
+    form.Textbox("group_id",description="用户组编码：（由10位不定长的字母或数字组合）",readonly="readonly",**input_style),
+    form.Textbox("group_name",len_of(1,32), description="用户组名称：（32个汉字以内）",**input_style),
     form.Button("submit", type="submit",html="<b>提交</b>",**button_style),
 )
 
 
-community_add_form = form.Form(
-    form.Textbox("node_id",description="节点编号:(由定长6位数字或字母组成）",readonly="readonly",**input_style),
-    form.Textbox("area_id",description="区域编码：（由10位不定长的字母或数字组合）",readonly="readonly",**input_style),
-    form.Textbox("community_id",is_alphanum2(1,10),description="小区编码：（由10位不定长的字母或数字组合）",**input_style),
-    form.Textbox("community_name",len_of(1,32), description="小区名称：（32个汉字以内）",**input_style),
-    form.Button("submit", type="submit",html="<b>提交</b>",**button_style),
-)
 
-community_update_form = form.Form(
-    form.Textbox("node_id",description="节点编号:(由定长6位数字或字母组成）",readonly="readonly",**input_style),
-    form.Textbox("area_id",description="区域编码：（由10位不定长的字母或数字组合）",readonly="readonly",**input_style),
-    form.Textbox("community_id",description="小区编码：（由10位不定长的字母或数字组合）",readonly="readonly",**input_style),
-    form.Textbox("community_name",len_of(1,32), description="区域名称：（32个汉字以内）",**input_style),
-    form.Button("submit", type="submit",html="<b>提交</b>",**button_style),
-)
 
 nas_add_form = form.Form(
     form.Textbox("ip_addr",is_ip,description="IP地址：",**input_style),
@@ -167,7 +153,7 @@ user_add_form = form.Form(
     form.Textbox("user_name",is_alphanum2(6,32),description="上网帐号：（字母和数字组合 6-32位以内）",**input_style),
     form.Textbox("user_cname",len_of(1,32),description="客户名称：（32个汉字以内）",**input_style),
     form.Password("password",is_alphanum2(6,20),description="上网密码(6-20字母数字)：",**input_style),
-    form.GroupedDropdown("area_community",[],description="选择区域小区："),
+    form.Dropdown("group_id",[],description="选择用户组："),
     form.Dropdown("product_id",product_seq(),description="选择产品套餐："),
     form.Dropdown("status", [(0,"未生效"),(1,"有效"),(2,"停机"),(3,"销户"),(4,"到期")],description="用户状态："),
     form.Textbox("auth_begin_date",description="生效日期：",**input_style),
@@ -187,7 +173,7 @@ user_update_form = form.Form(
     form.Textbox("user_name",description="上网帐号：（字母和数字组合 6-32位以内）",readonly="readonly",**input_style),
     form.Textbox("user_cname",len_of(1,32),description="客户名称：（32个汉字以内）",**input_style),
     form.Password("password",is_alphanum2(6,20),description="上网密码(6-20字母数字)：",**input_style),
-    form.GroupedDropdown("area_community",[],description="选择区域小区："),
+    form.Dropdown("group_id",[],description="选择用户组："),
     form.Dropdown("product_id",product_seq(),description="选择产品套餐："),
     form.Dropdown("status", [(0,"未生效"),(1,"有效"),(2,"停机"),(3,"销户"),(4,"到期")],description="用户状态："),
     form.Textbox("auth_begin_date",description="生效日期：",**input_style),

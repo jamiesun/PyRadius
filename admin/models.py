@@ -4,33 +4,19 @@ from sqlalchemy import *
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relation
 
-engine = create_engine('mysql://root:root@localhost/pyradius?charset=utf8',echo=True,pool_size=5, max_overflow=0)
+engine = create_engine('mysql://root:root@localhost/pyradius?charset=utf8',echo=False,pool_size=5, max_overflow=0)
 DeclarativeBase = declarative_base()
 metadata = DeclarativeBase.metadata
 metadata.bind = engine
 
-class RadArea(DeclarativeBase):
-    __tablename__ = 'rad_area'
+class RadGroup(DeclarativeBase):
+    __tablename__ = 'rad_group'
 
     __table_args__ = {}
 
     #column definitions
-    area_id = Column(u'area_id', VARCHAR(length=10), primary_key=True, nullable=False)
-    area_name = Column(u'area_name', VARCHAR(length=64), nullable=False)
-    node_id = Column(u'node_id', VARCHAR(length=32), primary_key=True, nullable=False)
-
-    #relation definitions
-
-
-class RadCommunity(DeclarativeBase):
-    __tablename__ = 'rad_community'
-
-    __table_args__ = {}
-
-    #column definitions
-    area_id = Column(u'area_id', VARCHAR(length=10), primary_key=True, nullable=False)
-    community_id = Column(u'community_id', VARCHAR(length=10), primary_key=True, nullable=False)
-    community_name = Column(u'community_name', VARCHAR(length=64), nullable=False)
+    group_id = Column(u'group_id', VARCHAR(length=10), primary_key=True, nullable=False)
+    group_name = Column(u'group_name', VARCHAR(length=64), nullable=False)
     node_id = Column(u'node_id', VARCHAR(length=32), primary_key=True, nullable=False)
 
     #relation definitions
@@ -155,21 +141,32 @@ class RadRoster(DeclarativeBase):
     #relation definitions
 
 
+class RadStat(DeclarativeBase):
+    __tablename__ = 'rad_stat'
+
+    __table_args__ = {}
+
+    #column definitions
+    name = Column(u'name', VARCHAR(length=255), primary_key=True, nullable=False)
+    value = Column(u'value', INTEGER(), nullable=False)
+
+    #relation definitions
+
+
 class RadUser(DeclarativeBase):
     __tablename__ = 'rad_user'
 
     __table_args__ = {}
 
     #column definitions
-    area_id = Column(u'area_id', VARCHAR(length=32), nullable=False)
     auth_begin_date = Column(u'auth_begin_date', VARCHAR(length=10), nullable=False)
     auth_end_date = Column(u'auth_end_date', VARCHAR(length=10), nullable=False)
     balance = Column(u'balance', INTEGER(), nullable=False)
     basic_fee = Column(u'basic_fee', INTEGER(), nullable=False)
-    community_id = Column(u'community_id', VARCHAR(length=32), nullable=False)
     concur_number = Column(u'concur_number', INTEGER(), nullable=False)
     create_time = Column(u'create_time', VARCHAR(length=19), nullable=False)
     domain_code = Column(u'domain_code', VARCHAR(length=6))
+    group_id = Column(u'group_id', VARCHAR(length=32), nullable=False)
     id = Column(u'id', VARCHAR(length=32), primary_key=True, nullable=False)
     idcard = Column(u'idcard', VARCHAR(length=32))
     install_address = Column(u'install_address', VARCHAR(length=128), nullable=False)
@@ -184,7 +181,6 @@ class RadUser(DeclarativeBase):
     status = Column(u'status', INTEGER(), nullable=False)
     time_length = Column(u'time_length', INTEGER(), nullable=False)
     user_cname = Column(u'user_cname', VARCHAR(length=64), nullable=False)
-    user_control = Column(u'user_control', INTEGER(), nullable=False)
     user_desc = Column(u'user_desc', VARCHAR(length=128))
     user_mac = Column(u'user_mac', INTEGER(), nullable=False)
     user_name = Column(u'user_name', VARCHAR(length=32), nullable=False)
@@ -230,22 +226,6 @@ class RadUserBill(DeclarativeBase):
     opr_id = Column(u'opr_id', VARCHAR(length=32), nullable=False)
     status = Column(u'status', INTEGER(), nullable=False)
     user_id = Column(u'user_id', VARCHAR(length=32), nullable=False)
-
-    #relation definitions
-
-
-class RadUserOrder(DeclarativeBase):
-    __tablename__ = 'rad_user_order'
-
-    __table_args__ = {}
-
-    #column definitions
-    auth_begin_date = Column(u'auth_begin_date', VARCHAR(length=10), nullable=False)
-    auth_end_date = Column(u'auth_end_date', VARCHAR(length=10), nullable=False)
-    id = Column(u'id', VARCHAR(length=32), primary_key=True, nullable=False)
-    operate_time = Column(u'operate_time', VARCHAR(length=19), nullable=False)
-    product_id = Column(u'product_id', VARCHAR(length=16), nullable=False)
-    user_name = Column(u'user_name', VARCHAR(length=32), nullable=False)
 
     #relation definitions
 

@@ -5,7 +5,8 @@ from gevent import socket
 from access_handler import accessHandler
 from accounting_handler import accountingHandler
 from pyrad import dictionary,host
-from settings import log 
+from settings import radiuslog 
+from logging import DEBUG
 import six
 import utils
 import gevent
@@ -29,7 +30,7 @@ class RudiusAuthServer(DatagramServer):
 
     def handle(self,data, address):
         if address[0] not in self.hosts:
-            log.error(u'Illegal request' + host)
+            radiuslog.error(u'Illegal request' + host)
             return 
 
         try:
@@ -38,7 +39,7 @@ class RudiusAuthServer(DatagramServer):
             gevent.spawn(accessHandler,pkt)  
             #self.pool.apply_async(accessHandler,(pkt))   
         except Exception as err:
-            log.error(u'process packet error:' + str(err))  
+            radiuslog.error(u'process packet error:' + str(err))  
 
 
 class RudiusAcctServer(DatagramServer):
@@ -55,8 +56,10 @@ class RudiusAcctServer(DatagramServer):
             socket.SO_RCVBUF,10240000)
 
     def handle(self,data, address):
+        if radiuslog.isEnabledFor(DEBUG):
+            radiuslog.debug("accept :%s:%s"%address)
         if address[0] not in self.hosts:
-            log.error(u'Illegal request' + host)
+            radiuslog.error(u'Illegal request' + host)
             return 
 
         try:
@@ -64,7 +67,7 @@ class RudiusAcctServer(DatagramServer):
             pkt.source,pkt.sock = address,self.socket
             gevent.spawn(accountingHandler,pkt)    
         except Exception as err:
-            log.error(u'process packet error:' + str(err))     
+            radiuslog.error(u'process packet error:' + str(err))     
 
 
 if __name__ == '__main__':
