@@ -138,6 +138,7 @@ class _AccountingRequestHandler():
                 return            
             sessiontime = req.get_acctsessiontime()
             updatetime = datetime.datetime.now()
+
             _starttime = updatetime + datetime.timedelta(seconds=-sessiontime)       
 
             online = dict(user = user,

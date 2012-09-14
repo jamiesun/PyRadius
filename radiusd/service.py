@@ -45,6 +45,10 @@ def in_black_roster(macaddr):
     return False
 
 @cache_data()
+def get_nas_all():
+    return get_db().query(models.RadNas).all()
+
+@cache_data()
 def get_nas(ipaddr):
     return get_db().query(models.RadNas).filter_by(ip_addr = ipaddr).first()
 

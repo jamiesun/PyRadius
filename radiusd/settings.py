@@ -3,7 +3,13 @@
 import sys
 import logging
 
-def getLogger(name,logfile,level=logging.DEBUG):
+__loglevel = logging.DEBUG
+
+def is_debug():
+  return __loglevel == logging.DEBUG
+
+
+def getLogger(name,logfile,level=__loglevel):
     formatter = logging.Formatter('%(name)-12s %(asctime)s %(levelname)-8s %(message)s', '%a, %d %b %Y %H:%M:%S',)
     logger = logging.getLogger(name)
     logger.setLevel(level)
@@ -11,7 +17,7 @@ def getLogger(name,logfile,level=logging.DEBUG):
     file_handler.setFormatter(formatter)
     logger.addHandler(file_handler)
     if level == logging.DEBUG:
-        stream_handler = logging.StreamHandler(sys.stderr)
+        stream_handler = logging.StreamHandler(sys.stdout)
         logger.addHandler(stream_handler)   
     return logger
 
@@ -21,7 +27,7 @@ config = {
   "rejectDelay":9,#认证拒绝达到7次,该用户将启动拒绝延迟,以缓慢DOS/穷举攻击,单位:秒,0表示不延迟,最大9秒
 }
 
-radiuslog = getLogger("pyradius","radius.log",level=logging.DEBUG)
+radiuslog = getLogger("pyradius","radius.log",level=__loglevel)
 ticketlog = getLogger("pyradius","ticket.log",level=logging.INFO)
 
 

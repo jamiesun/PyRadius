@@ -5,7 +5,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relation
 
 engine = create_engine('mysql://root:root@localhost/pyradius?charset=utf8',
-    echo=True,pool_size=5, max_overflow=5)
+    echo=False,pool_size=5, max_overflow=5)
 
 DeclarativeBase = declarative_base()
 metadata = DeclarativeBase.metadata

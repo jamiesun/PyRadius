@@ -147,9 +147,13 @@ class AuthPacket2(AuthPacket):
         except:return None    
 
     def encrypt_chap(self,password):
+        if not self.authenticator:
+            self.authenticator = self.CreateAuthenticator()
+        if not self.id:
+            self.id = self.CreateID()
         if isinstance(password, six.text_type):
             password = password.encode('utf-8')
-        return md5_constructor("%s%s%s"%(self.id,password,self.authenticator)).digest()
+        return md5_constructor("%s%s%s"%(self.id,password,self.authenticator)).digest()        
 
     def is_valid_pwd(self,userpwd):
         if not self.get_chappwd():

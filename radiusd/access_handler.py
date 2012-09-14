@@ -1,20 +1,20 @@
 #!/usr/bin/env python
 #coding:utf-8
 from pyrad import packet
-from settings import radiuslog
-from logging import DEBUG
+from settings import radiuslog,is_debug
 import service
+import logging
 import utils
 
 class _AccessRequestHandler(): 
 
     def process(self,req):
         attr_keys = req.keys()
-        if radiuslog.isEnabledFor(DEBUG):
-            radiuslog.debug("::Received an authentication request")
-            radiuslog.debug("Attributes: ")        
+        if is_debug():
+            radiuslog.info("::Received an authentication request")
+            radiuslog.info("Attributes: ")        
             for attr in attr_keys:
-                radiuslog.debug( "%s: %s" % (attr, req[attr]))
+                radiuslog.info( "%s: %s" % (attr, req[attr]))
 
         nasaddr = req.get_nasaddr()
         macaddr = req.get_macaddr()
@@ -137,7 +137,7 @@ class _AccessRequestHandler():
 
         req.sock.sendto(reply.ReplyPacket(), reply.source)     
 
-        if radiuslog.isEnabledFor(DEBUG):
+        if is_debug():
             radiuslog.debug("[Auth] send an authentication accept,user[%s],nas[%s]"\
                 %(req.get_username(),nas.ip_addr))
 
