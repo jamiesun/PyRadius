@@ -3,7 +3,7 @@
 import sys
 import logging
 
-__loglevel = logging.DEBUG
+__loglevel = logging.INFO
 
 def is_debug():
   return __loglevel == logging.DEBUG
