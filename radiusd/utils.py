@@ -143,24 +143,33 @@ class AuthPacket2(AuthPacket):
         except:return None        
 
     def get_chappwd(self):
-        try:return tools.DecodeString(self.get(3)[0])
+        try:return tools.DecodeOctets(self.get(3)[0])
         except:return None    
 
-    def encrypt_chap(self,password):
+    def verifyChapEcrypt(self,userpwd):
+        if isinstance(userpwd, six.text_type):
+            userpwd = userpwd.strip().encode('utf-8')   
+
+        _password = self.get_chappwd()
+        if len(_password) != 17:
+            return False
+
+        chapid = _password[0]
+        password = _password[1:]
+
         if not self.authenticator:
             self.authenticator = self.CreateAuthenticator()
-        if not self.id:
-            self.id = self.CreateID()
-        if isinstance(password, six.text_type):
-            password = password.encode('utf-8')
-        return md5_constructor("%s%s%s"%(self.id,password,self.authenticator)).digest()        
+        _pwd =  md5_constructor("%s%s%s"%(chapid,userpwd,self.authenticator)).digest()
+        for i in range(16):
+            if password[i] != _pwd[i]:
+                return False
+        return True      
 
     def is_valid_pwd(self,userpwd):
         if not self.get_chappwd():
-            pwd = self.get_passwd()
-            return pwd == userpwd
+            return userpwd == self.get_passwd()
         else:
-            return self.encrypt_chap(userpwd) == self.get_chappwd()
+            return self.verifyChapEcrypt(userpwd)
 
 class AcctPacket2(AcctPacket):
     def __init__(self, code=AccountingRequest, id=None, secret=six.b(''),

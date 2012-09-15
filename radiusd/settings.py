@@ -17,7 +17,7 @@ def getLogger(name,logfile,level=__loglevel):
     file_handler.setFormatter(formatter)
     logger.addHandler(file_handler)
     if level == logging.DEBUG:
-        stream_handler = logging.StreamHandler(sys.stdout)
+        stream_handler = logging.StreamHandler(sys.stderr)
         logger.addHandler(stream_handler)   
     return logger
 
