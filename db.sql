@@ -3,7 +3,7 @@
 -- Server version:               5.6.5-m8 - MySQL Community Server (GPL)
 -- Server OS:                    Win32
 -- HeidiSQL version:             7.0.0.4160
--- Date/time:                    2012-09-01 16:31:52
+-- Date/time:                    2012-09-17 20:24:11
 -- --------------------------------------------------------
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
@@ -17,26 +17,13 @@ CREATE DATABASE IF NOT EXISTS `pyradius` /*!40100 DEFAULT CHARACTER SET utf8 */;
 USE `pyradius`;
 
 
--- Dumping structure for table pyradius.rad_area
-DROP TABLE IF EXISTS `rad_area`;
-CREATE TABLE IF NOT EXISTS `rad_area` (
+-- Dumping structure for table pyradius.rad_group
+DROP TABLE IF EXISTS `rad_group`;
+CREATE TABLE IF NOT EXISTS `rad_group` (
   `node_id` varchar(32) NOT NULL,
-  `area_id` varchar(10) NOT NULL,
-  `area_name` varchar(64) NOT NULL,
-  PRIMARY KEY (`node_id`,`area_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
--- Data exporting was unselected.
-
-
--- Dumping structure for table pyradius.rad_community
-DROP TABLE IF EXISTS `rad_community`;
-CREATE TABLE IF NOT EXISTS `rad_community` (
-  `node_id` varchar(32) NOT NULL,
-  `area_id` varchar(10) NOT NULL,
-  `community_id` varchar(10) NOT NULL,
-  `community_name` varchar(64) NOT NULL,
-  PRIMARY KEY (`node_id`,`area_id`,`community_id`)
+  `group_id` varchar(10) NOT NULL,
+  `group_name` varchar(64) NOT NULL,
+  PRIMARY KEY (`node_id`,`group_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- Data exporting was unselected.
@@ -119,7 +106,6 @@ CREATE TABLE IF NOT EXISTS `rad_opr_log` (
 DROP TABLE IF EXISTS `rad_product`;
 CREATE TABLE IF NOT EXISTS `rad_product` (
   `id` varchar(16) NOT NULL,
-  `node_id` varchar(32) NOT NULL,
   `name` varchar(64) NOT NULL,
   `policy` int(1) NOT NULL COMMENT '产品套餐策略：0买断包月，1预付费时长',
   `status` int(1) NOT NULL COMMENT '产品状态：0正常，1停用',
@@ -165,8 +151,7 @@ CREATE TABLE IF NOT EXISTS `rad_user` (
   `user_cname` varchar(64) NOT NULL,
   `password` varchar(64) NOT NULL,
   `node_id` varchar(32) NOT NULL,
-  `area_id` varchar(32) NOT NULL,
-  `community_id` varchar(32) NOT NULL,
+  `group_id` varchar(32) NOT NULL,
   `product_id` varchar(16) NOT NULL,
   `opr_id` varchar(32) DEFAULT NULL,
   `auth_begin_date` varchar(10) NOT NULL,
@@ -176,14 +161,13 @@ CREATE TABLE IF NOT EXISTS `rad_user` (
   `install_address` varchar(128) NOT NULL,
   `create_time` varchar(19) NOT NULL,
   `status` int(10) NOT NULL COMMENT '用户状态（0:预定 1:有效 2：停机 3：销户 4：到期）',
-  `user_control` int(1) NOT NULL COMMENT '是否使用用户控制(0/1,不使用/使用)',
   `user_mac` int(1) NOT NULL COMMENT '是否绑定mac地址(0/1,不绑定/绑定)',
   `user_vlan` int(1) NOT NULL COMMENT '是否绑定vlan(0/1,不绑定/绑定)',
-  `user_concur_number` int(10) NOT NULL COMMENT '并发数(0为不限制)',
+  `concur_number` int(10) NOT NULL COMMENT '并发数(0为不限制)',
   `mac_addr` varchar(17) DEFAULT NULL,
   `vlan_id` int(10) DEFAULT NULL,
   `vlan_id2` int(10) DEFAULT NULL,
-  `ip_address` varchar(15) DEFAULT NULL,
+  `ip_addr` varchar(15) DEFAULT NULL,
   `domain_code` varchar(6) DEFAULT NULL,
   `balance` int(10) NOT NULL COMMENT '用户余额',
   `time_length` int(10) NOT NULL COMMENT '用户所剩时长',
@@ -206,7 +190,7 @@ DROP TABLE IF EXISTS `rad_user_acct`;
 CREATE TABLE IF NOT EXISTS `rad_user_acct` (
   `id` varchar(32) NOT NULL,
   `node_id` varchar(32) NOT NULL,
-  `user_id` varchar(32) NOT NULL,
+  `user_name` varchar(32) NOT NULL,
   `acct_start_time` varchar(19) NOT NULL,
   `acct_stop_time` varchar(19) NOT NULL,
   `acct_session_time` int(10) NOT NULL,
@@ -227,26 +211,11 @@ CREATE TABLE IF NOT EXISTS `rad_user_bill` (
   `fee_type` int(1) NOT NULL,
   `fee_value` int(10) NOT NULL,
   `node_id` varchar(32) NOT NULL,
-  `user_id` varchar(32) NOT NULL,
+  `user_name` varchar(32) NOT NULL,
   `opr_id` varchar(32) NOT NULL,
   `bill_desc` varchar(512) NOT NULL,
   `bill_time` varchar(19) NOT NULL,
   `status` int(1) NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
--- Data exporting was unselected.
-
-
--- Dumping structure for table pyradius.rad_user_order
-DROP TABLE IF EXISTS `rad_user_order`;
-CREATE TABLE IF NOT EXISTS `rad_user_order` (
-  `id` varchar(32) NOT NULL,
-  `user_name` varchar(32) NOT NULL,
-  `product_id` varchar(16) NOT NULL,
-  `auth_begin_date` varchar(10) NOT NULL,
-  `auth_end_date` varchar(10) NOT NULL,
-  `operate_time` varchar(19) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
