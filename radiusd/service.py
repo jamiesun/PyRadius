@@ -57,7 +57,7 @@ def get_nas_ips(node_id):
     return [ nn.ip_addr  for nn in get_db().query(models.RadNasNode).filter_by(node_id = node_id)]
 
 def user_exists(username):
-    return get_user(username) is not None
+    return user_cache.has_key(username)
 
 def get_user(username):
     user = user_cache.get(username)

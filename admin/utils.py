@@ -10,6 +10,10 @@ from beaker.cache import CacheManager
 from settings import config
 from sqlalchemy.orm import scoped_session,sessionmaker
 from models import engine
+from Crypto.Cipher import AES
+import binascii
+
+_key = '___a_b_c_d_e_f__'
 
 session = scoped_session(sessionmaker(bind=engine,autocommit=False, autoflush=False))()
 def get_db():
@@ -82,45 +86,16 @@ def nextid():
 def currtime():
     return datetime.datetime.now().strftime( "%Y-%m-%d %H:%M:%S")
 
-def encrypt(s,key=128):
-    b = bytearray(str(s).encode("utf8"))
-    n = len(b) 
-    c = bytearray(n*2)
-    j = 0
-    for i in range(0, n):
-        b1 = b[i]
-        b2 = b1 ^ key 
-        c1 = b2 % 16
-        c2 = b2 // 16 
-        c1 = c1 + 65
-        c2 = c2 + 65 
-        c[j] = c1
-        c[j+1] = c2
-        j = j+2
-    return c.decode("utf8")
+def encrypt(x):
+    if not x:return ''
+    x = str(x)
+    result =  AES.new(_key, AES.MODE_CBC).encrypt(x.ljust(len(x)+(16-len(x)%16)))
+    return binascii.hexlify(result)
 
-def decrypt(s,key=128):
-    c = bytearray(str(s).encode("utf8"))
-    n = len(c) 
-    if n % 2 != 0 :
-        return ""
-    n = n // 2
-    b = bytearray(n)
-    j = 0
-    for i in range(0, n):
-        c1 = c[j]
-        c2 = c[j+1]
-        j = j+2
-        c1 = c1 - 65
-        c2 = c2 - 65
-        b2 = c2*16 + c1
-        b1 = b2^ key
-        b[i]= b1
-    try:
-        return b.decode("utf8")
-    except:
-        return "failed"
-
+def decrypt(x):
+    if not x or len(x)%16 > 0 :return ''
+    x = binascii.unhexlify(str(x))
+    return AES.new(_key, AES.MODE_CBC).decrypt(x).strip()    
 
 
 
