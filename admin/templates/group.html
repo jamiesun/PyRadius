@@ -1,0 +1,72 @@
+<%inherit file="base.html"/>
+<%def name="head()"> 
+<script>
+function queryGroup()
+{
+    window.location.href = "/group?node_id="+$("#node_id").val();
+}
+
+function addGroup()
+{
+     if($("#node_id").val()==""){
+        alert("请选择节点");
+        return;
+     }
+     window.location.href = "/group/add?node_id="+$("#node_id").val();
+}
+
+function deleteGroup(nid,aid)
+{
+    if(confirm("删除节点同时会删除节点下的所有操作员，确认删除吗？")){
+        window.location.href = "/group/delete?node_id="+nid+"&group_id="+aid;
+    }
+}
+</script>
+</%def> 
+
+
+<%def name="body()"> 
+<div class="content-box">
+    <div class="content-box-header">
+        <h3>节点信息</h3>
+    </div>
+    <!-- End .content-box-header -->
+    <div class="content-box-content">
+        <div class="tab-content default-tab">
+        <p>
+        <select id="node_id" name="node_id" >
+            <option value="">节点选择</option>
+            % for node in nodes:
+             <option value="${node.id}" ${is_select(node.id,node_id)}>${node.name}</option>
+            % endfor
+        </select>
+        <a class="button" href="javascript:queryGroup();">查询用户组</a> 
+        <a class="button" href="javascript:addGroup();">新增用户组</a> 
+        </p>        
+          <table>
+            <thead>
+              <tr>
+                <th>用户组编号</th>
+                <th>用户组名称</th>
+                <th>操作</th>
+              </tr>
+            </thead>          
+            <tbody>
+            % for group in groups:
+                <tr>
+                    <td>${group.group_id}</td>
+                    <td>${group.group_name}</td>
+                    <td>
+                    <a href="/group/update?node_id=${group.node_id}&group_id=${group.group_id}" ><img src="/images/icons/pencil.png" alt="Edit"></a> 
+                    <a href="javascript:deleteGroup('${group.node_id}','${group.group_id}');" ><img src="/images/icons/cross.png" alt="Delete"></a> 
+                    </td>
+                </tr>            
+            % endfor             
+            </tbody>      
+            </table>
+      
+        </div>
+    </div>
+</div>
+
+</%def> 
